@@ -26,3 +26,4 @@ end
 # end rails
 
 gem 'rubocop-rails_config', '~> 1.16'
+gem 'rice', '~> 4.3', '>= 4.3.1'
