@@ -1,0 +1,19 @@
+inherit_gem:
+  rubocop-rails_config:
+    - config/rails.yml
+
+AllCops:
+  TargetRubyVersion: 3.3
+  Exclude:
+    - 'db/*_schema.rb'
+    - 'db/schema.rb'
+
+Style/ClassAndModuleChildren:
+  EnforcedStyle: nested
+
+Lint/Debugger:
+  Enabled: true
+
+Style/StringLiterals:
+  Enabled: true
+  EnforcedStyle: single_quotes
