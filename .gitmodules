@@ -1,0 +1,3 @@
+[submodule "ac-wotlk"]
+	path = ac-wotlk
+	url = https://github.com/azerothcore/azerothcore-wotlk.git
