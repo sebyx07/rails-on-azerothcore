@@ -1,0 +1,52 @@
+#!/bin/bash
+set -e
+
+COMPILED_FLAG="/azerothcore-build/tmp/.compiled"
+AUTHSERVER="/azerothcore/build/bin/authserver"
+SOURCE_CONFIG="/azerothcore-build/config/authserver.conf"
+DEST_CONFIG="/azerothcore/build/etc/authserver.conf"
+
+copy_config() {
+    echo "Copying auth configuration..."
+    cp "$SOURCE_CONFIG" "$DEST_CONFIG"
+    echo "Configuration copied."
+}
+
+start_auth() {
+    echo "Starting auth..."
+    $AUTHSERVER &
+    AUTHSERVER_PID=$!
+    echo "Authserver started with PID: $AUTHSERVER_PID"
+}
+
+stop_auth() {
+    if [ ! -z "$AUTHSERVER_PID" ]; then
+        echo "Stopping auth (PID: $AUTHSERVER_PID)..."
+        kill $AUTHSERVER_PID
+        wait $AUTHSERVER_PID 2>/dev/null
+        echo "Authserver stopped."
+    fi
+}
+
+restart_auth() {
+    stop_auth
+    copy_config
+    start_auth
+}
+
+# Wait for initial compilation if .compiled doesn't exist
+while [ ! -f "$COMPILED_FLAG" ]; do
+    echo "Waiting for initial compilation to complete..."
+    sleep 5
+done
+
+# Copy config and start auth initially
+copy_config
+start_auth
+
+# Watch for changes to .compiled file and auth.conf
+while true; do
+    inotifywait -e create,delete -q "$COMPILED_FLAG" "$SOURCE_CONFIG"
+    echo "Detected change in .compiled or auth.conf. Restarting auth..."
+    restart_auth
+done

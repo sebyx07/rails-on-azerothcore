@@ -1,0 +1,42 @@
+#!/bin/bash
+set -e
+
+WATCH_DIR="/azerothcore/modules"
+DOWNLOAD_CLIENT_DATA_SCRIPT="/azerothcore-build/bin/client-data-download"
+COMPILE_SCRIPT="/azerothcore-build/bin/compile-ac"
+COMPILED_FLAG="/azerothcore-build/tmp/.compiled"
+DEBOUNCE_SECONDS=2
+
+# Function to perform compilation and touch the flag file
+compile_and_touch() {
+    echo "Triggering compilation..."
+    if bash $COMPILE_SCRIPT; then
+        echo "Compilation completed successfully. Touching $COMPILED_FLAG"
+        touch "$COMPILED_FLAG"
+    else
+        echo "Compilation failed. Not touching $COMPILED_FLAG"
+    fi
+}
+
+# Check if compiled flag exists, if not, trigger initial compilation
+if [ ! -f "$COMPILED_FLAG" ]; then
+    bash $DOWNLOAD_CLIENT_DATA_SCRIPT
+    echo "Compiled flag not found. Triggering initial compilation..."
+    compile_and_touch
+fi
+
+echo "Watching $WATCH_DIR for changes..."
+
+last_compile_time=$(date +%s)
+
+inotifywait -m -r -e modify,create,delete,move --format '%w%f' "$WATCH_DIR" |
+while read -r file; do
+    if [[ "$file" =~ \.(cpp|h|hpp)$ ]]; then
+        current_time=$(date +%s)
+        if (( current_time - last_compile_time >= DEBOUNCE_SECONDS )); then
+            echo "Change detected in $file."
+            compile_and_touch
+            last_compile_time=$current_time
+        fi
+    fi
+done

@@ -1,0 +1,70 @@
+#!/bin/bash
+set -e
+set -o pipefail
+
+# Rice configuration
+BUILD_SCRIPT_DIR="/azerothcore-build"
+SRCDIR="/azerothcore"
+BUILDDIR="/azerothcore/build"
+CUSTOM_CMAKELIST="/azerothcore-build/config/CMakeLists.txt"
+
+# Ruby configuration
+export RUBY_VERSION=$(ruby -e 'puts RUBY_VERSION')
+export RUBY_INCLUDE_PATH="/home/acore/.rbenv/versions/$RUBY_VERSION/include/ruby-${RUBY_VERSION%.*}:/home/acore/.rbenv/versions/$RUBY_VERSION/include/ruby-${RUBY_VERSION%.*}/x86_64-linux"
+export RUBY_LIB_PATH="/home/acore/.rbenv/versions/$RUBY_VERSION/lib"
+export RICE_ROOT="/usr/local/bundle/ruby/3.3.0/gems/rice-4.3.1"
+export AC_SRC_DIR="/azerothcore/src"
+
+# Copy custom CMakeLists.txt
+#echo "Copying custom CMakeLists.txt"
+#cp $CUSTOM_CMAKELIST $SRCDIR/CMakeLists.txt
+
+# Create build directory if it doesn't exist
+mkdir -p $BUILDDIR
+cd $BUILDDIR
+
+# Common flags
+COMMON_FLAGS="-fPIC -ftls-model=global-dynamic"
+
+# Run CMake
+cmake $SRCDIR \
+  -DCMAKE_INSTALL_PREFIX=$BUILDDIR \
+  -DCMAKE_C_COMPILER=/usr/bin/clang \
+  -DCMAKE_CXX_COMPILER=/usr/bin/clang++ \
+  -DWITH_WARNINGS=1 \
+  -DCMAKE_C_FLAGS="$COMMON_FLAGS -Werror" \
+  -DCMAKE_CXX_FLAGS="$COMMON_FLAGS -Werror -I$RUBY_INCLUDE_PATH -I${RICE_ROOT}/include -I$AC_SRC_DIR/server/game -I$AC_SRC_DIR/server/shared -DFMT_HEADER_ONLY" \
+  -DCMAKE_EXE_LINKER_FLAGS="-L$RUBY_LIB_PATH -lruby -Wl,-rpath,$RUBY_LIB_PATH" \
+  -DCMAKE_SHARED_LINKER_FLAGS="$COMMON_FLAGS -Wl,--no-as-needed -ldl" \
+  -DTOOLS=0 \
+  -DSCRIPTS=static \
+  -DMODULES=dynamic \
+  -DUSE_SCRIPTPCH=1 \
+  -DUSE_COREPCH=1 \
+  -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+  -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+  -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+  -DCCACHE_DIR=/azerothcore-build/tmp/ccache \
+  -DRUBY_EXECUTABLE=$(which ruby) \
+  -DRUBY_INCLUDE_DIRS="$RUBY_INCLUDE_PATH" \
+  -DRUBY_LIBRARY="$RUBY_LIB_PATH/libruby.so" \
+  -DCMAKE_INCLUDE_PATH="$RUBY_INCLUDE_PATH:${RICE_ROOT}/include" \
+  -DCMAKE_LIBRARY_PATH="$RUBY_LIB_PATH" \
+  -DRICE_ROOT="${RICE_ROOT}" \
+  -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+
+# Add Ruby lib path to LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$RUBY_LIB_PATH
+
+# Compile
+cpu_cores=$(($(nproc) + 1))
+make -j $cpu_cores
+
+# Install
+make install
+
+cp /azerothcore/build/bin/modules/mod-ruby.so /azerothcore/modules/mod-ruby/out/mod_ruby.so
+
+touch $BUILD_SCRIPT_DIR/tmp/.compiled
+
+echo "Compilation and installation completed successfully!"

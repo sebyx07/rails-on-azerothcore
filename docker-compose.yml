@@ -56,20 +56,20 @@ services:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
 
-#  compiler:
-#    container_name: roa_compiler
-#    build:
-#      dockerfile: azerothcore-build/docker/ac.Dockerfile
-#      args:
-#        USER_ID: ${DOCKER_USER_ID:-1000}
-#        GROUP_ID: ${DOCKER_GROUP_ID:-1000}
-#        DOCKER_USER: ${DOCKER_USER:-acore}
-#    volumes:
-#      - ./azerothcore:/azerothcore
-#      - ./azerothcore-build:/azerothcore-build
-#      - ./mod-ruby:/azerothcore/modules/mod-ruby
-#      - bundle-cache:/usr/local/bundle
-#    command: ./bin/compiler
+  compiler:
+    container_name: roa_compiler
+    build:
+      dockerfile: RoA/docker/ac.Dockerfile
+      args:
+        USER_ID: ${DOCKER_USER_ID:-1000}
+        GROUP_ID: ${DOCKER_GROUP_ID:-1000}
+        DOCKER_USER: ${DOCKER_USER:-acore}
+    volumes:
+      - ./ac-wotlk:/azerothcore
+      - ./RoA/build:/azerothcore-build
+      - ./RoA/mod-ruby:/azerothcore/modules/mod-ruby
+      - bundle-cache:/usr/local/bundle
+    command: ./bin/compiler
 #
 #  world:
 #    container_name: roa_world

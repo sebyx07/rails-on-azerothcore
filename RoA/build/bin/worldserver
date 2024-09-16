@@ -1,0 +1,52 @@
+#!/bin/bash
+set -e
+
+COMPILED_FLAG="/azerothcore-build/tmp/.compiled"
+WORLDSERVER="/azerothcore/build/bin/worldserver"
+SOURCE_CONFIG="/azerothcore-build/config/worldserver.conf"
+DEST_CONFIG="/azerothcore/build/etc/worldserver.conf"
+
+copy_config() {
+    echo "Copying worldserver configuration..."
+    cp "$SOURCE_CONFIG" "$DEST_CONFIG"
+    echo "Configuration copied."
+}
+
+start_worldserver() {
+    echo "Starting worldserver..."
+    $WORLDSERVER &
+    WORLDSERVER_PID=$!
+    echo "Worldserver started with PID: $WORLDSERVER_PID"
+}
+
+stop_worldserver() {
+    if [ ! -z "$WORLDSERVER_PID" ]; then
+        echo "Stopping worldserver (PID: $WORLDSERVER_PID)..."
+        kill $WORLDSERVER_PID
+        wait $WORLDSERVER_PID 2>/dev/null
+        echo "Worldserver stopped."
+    fi
+}
+
+restart_worldserver() {
+    stop_worldserver
+    copy_config
+    start_worldserver
+}
+
+# Wait for initial compilation if .compiled doesn't exist
+while [ ! -f "$COMPILED_FLAG" ]; do
+    echo "Waiting for initial compilation to complete..."
+    sleep 5
+done
+
+# Copy config and start worldserver initially
+copy_config
+start_worldserver
+
+# Watch for changes to .compiled file and worldserver.conf
+while true; do
+    inotifywait -e create,modify,delete,attrib -q "$COMPILED_FLAG" "$SOURCE_CONFIG"
+    echo "Detected change in .compiled or worldserver.conf. Restarting worldserver..."
+    restart_worldserver
+done

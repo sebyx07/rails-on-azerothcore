@@ -1,0 +1,38 @@
+#!/bin/bash
+set -e
+
+# URL of the file to download
+FILE_URL="https://github.com/wowgaming/client-data/releases/download/v16/data.zip"
+
+# Directory to save the downloaded file
+DOWNLOAD_DIR="/tmp"
+
+# Final destination for the client data
+FINAL_DIR="/azerothcore/env/dist/client-data"
+
+# Check if the final directory already exists and has content
+if [ -d "$FINAL_DIR" ] && [ "$(ls -A $FINAL_DIR)" ]; then
+    echo "The directory $FINAL_DIR already exists and is not empty."
+    echo "Skipping download and extraction. If you want to re-download, please remove or empty the directory first."
+    exit 0
+fi
+
+# Create final directory if it does not exist
+mkdir -p "$FINAL_DIR"
+
+# Filename to save the downloaded file
+FILENAME="$DOWNLOAD_DIR/data.zip"
+
+# Download the file with progress
+echo "Downloading WoW client data to $DOWNLOAD_DIR ..."
+curl -L -# -o "$FILENAME" "$FILE_URL"
+
+# Unzip the downloaded file directly to the final destination
+echo "Unzipping file to $FINAL_DIR ..."
+unzip -o "$FILENAME" -d "$FINAL_DIR"
+
+# Remove the downloaded zip file
+echo "Cleaning up..."
+rm "$FILENAME"
+
+echo "WoW client data setup complete. Files are now in $FINAL_DIR"
