@@ -1,11 +1,19 @@
 # frozen_string_literal: true
 
-# This file should ensure the existence of records required to run the application in every environment (production,
-# development, test). The code here should be idempotent so that it can be executed at any point in every environment.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Example:
-#
-#   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
-#     MovieGenre.find_or_create_by!(name: genre_name)
-#   end
+seed_files = Dir[Rails.root.join('db', 'seeds', '*.rb')]
+ApplicationRecord.transaction do
+  seed_files.sort.each do |file|
+    puts "Loading seed file: seeds/#{file.split("/").last}"
+    load file
+  end
+end
+
+dev_seed_files = Dir[Rails.root.join('db', 'dev_seeds', '*.rb')]
+ApplicationRecord.transaction do
+  require 'sidekiq/testing'
+  Sidekiq::Testing.inline!
+  dev_seed_files.sort.each do |file|
+    puts "Loading seed file: dev_seeds/#{file.split("/").last}"
+    load file
+  end
+end if Rails.env.development?
