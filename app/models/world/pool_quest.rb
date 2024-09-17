@@ -15,6 +15,6 @@
 module World
   class PoolQuest < WorldApplicationRecord
     self.table_name = 'pool_quest'
-    self.primary = :entry
+    self.primary_key =  :entry
   end
 end

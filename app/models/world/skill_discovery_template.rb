@@ -12,6 +12,6 @@
 module World
   class SkillDiscoveryTemplate < WorldApplicationRecord
     self.table_name = 'skill_discovery_template'
-    self.primary_keys = %i[reqSpell spellId]
+    self.primary_key = %i[reqSpell spellId]
   end
 end

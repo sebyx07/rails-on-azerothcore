@@ -18,6 +18,6 @@
 module World
   class SpellArea < WorldApplicationRecord
     self.table_name = 'spell_area'
-    self.primary_keys = 'area', 'aura'
+    self.primary_key = 'area', 'aura'
   end
 end

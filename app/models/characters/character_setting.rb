@@ -11,6 +11,6 @@
 module Characters
   class CharacterSetting < CharactersApplicationRecord
     self.table_name = 'character_settings'
-    self.primary_keys = %i[guid source]
+    self.primary_key = %i[guid source]
   end
 end

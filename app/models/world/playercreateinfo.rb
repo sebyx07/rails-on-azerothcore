@@ -16,6 +16,6 @@
 module World
   class Playercreateinfo < WorldApplicationRecord
     self.table_name = 'playercreateinfo'
-    self.primary = [:race, :class]
+    self.primary_key =  [:race, :class]
   end
 end

@@ -13,6 +13,6 @@
 module World
   class QuestGreetingLocale < WorldApplicationRecord
     self.table_name = 'quest_greeting_locale'
-    self.primary_keys = [:ID, :type, :locale]
+    self.primary_key = [:ID, :type, :locale]
   end
 end

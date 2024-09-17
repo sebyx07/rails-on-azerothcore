@@ -21,6 +21,6 @@
 module World
   class CreatureClasslevelstat < WorldApplicationRecord
     self.table_name = 'creature_classlevelstats'
-    self.primary_keys = %i[class level]
+    self.primary_key = %i[class level]
   end
 end

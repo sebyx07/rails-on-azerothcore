@@ -16,6 +16,6 @@
 module World
   class Waypoint < WorldApplicationRecord
     self.table_name = 'waypoints'
-    self.primary_keys = :entry, :pointid
+    self.primary_key = :entry, :pointid
   end
 end

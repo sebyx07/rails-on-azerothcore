@@ -16,6 +16,6 @@
 module World
   class PoolGameobject < WorldApplicationRecord
     self.table_name = 'pool_gameobject'
-    self.primary = :guid
+    self.primary_key =  :guid
   end
 end

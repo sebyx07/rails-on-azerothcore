@@ -1,6 +1,4 @@
 #include "ac_account.hpp"
-#include "AccountMgr.h"
-#include "DatabaseEnv.h"
 #include <iostream>
 
 VALUE rb_cAcAccount;

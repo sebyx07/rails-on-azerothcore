@@ -12,6 +12,6 @@
 module Characters
   class CharacterSkill < CharactersApplicationRecord
     self.table_name = 'character_skills'
-    self.primary_keys = %i[guid skill]
+    self.primary_key = %i[guid skill]
   end
 end

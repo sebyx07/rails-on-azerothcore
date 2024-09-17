@@ -27,7 +27,6 @@ end
 
 group :development do
   gem 'rubocop-rails_config', '~> 1.16'
-  gem 'spring-commands-rspec', '~> 1.0', '>= 1.0.4'
   gem 'annotate', '~> 3.2'
 end
 

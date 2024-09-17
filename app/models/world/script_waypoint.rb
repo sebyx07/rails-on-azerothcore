@@ -15,6 +15,6 @@
 module World
   class ScriptWaypoint < WorldApplicationRecord
     self.table_name = 'script_waypoint'
-    self.primary_keys = %i[entry pointid]
+    self.primary_key = %i[entry pointid]
   end
 end

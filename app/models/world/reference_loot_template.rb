@@ -18,6 +18,6 @@
 module World
   class ReferenceLootTemplate < WorldApplicationRecord
     self.table_name = 'reference_loot_template'
-    self.primary_keys = %i[Entry Item]
+    self.primary_key = %i[Entry Item]
   end
 end

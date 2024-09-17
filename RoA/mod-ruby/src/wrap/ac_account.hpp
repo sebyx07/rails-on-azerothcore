@@ -3,6 +3,7 @@
 
 #include "Define.h"
 #include "DatabaseEnv.h"
+#include "AccountMgr.h"
 #include <ruby.h>
 #include <string>
 

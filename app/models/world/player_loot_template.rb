@@ -18,6 +18,6 @@
 module World
   class PlayerLootTemplate < WorldApplicationRecord
     self.table_name = 'player_loot_template'
-    self.primary_keys = [:Entry, :Item]
+    self.primary_key = [:Entry, :Item]
   end
 end

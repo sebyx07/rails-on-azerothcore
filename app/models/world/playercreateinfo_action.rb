@@ -17,6 +17,6 @@
 module World
   class PlayercreateinfoAction < WorldApplicationRecord
     self.table_name = 'playercreateinfo_action'
-    self.primary = [:class, :button, :class]
+    self.primary_key =  [:class, :button, :class]
   end
 end

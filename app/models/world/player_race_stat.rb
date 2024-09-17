@@ -14,6 +14,6 @@
 module World
   class PlayerRaceStat < WorldApplicationRecord
     self.table_name = 'player_race_stats'
-    self.primary = 'Race'
+    self.primary_key = 'Race'
   end
 end

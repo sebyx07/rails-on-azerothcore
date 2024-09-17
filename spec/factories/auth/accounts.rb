@@ -31,12 +31,43 @@
 #
 #  idx_username  (username) UNIQUE
 #
-require 'rails_helper'
 
-RSpec.describe Auth::Account, type: :model do
-  describe 'factory' do
-    it 'is valid' do
-      expect(create(:account)).to be_valid
+FactoryBot.define do
+  factory :account, class: Auth::Account do
+    email { Faker::Internet.email }
+    expansion { rand(0..10) }  # Assuming expansion can be between 0 and 10
+    failed_logins { 0 }
+    joindate { Faker::Time.between(from: 2.years.ago, to: Time.now) }
+    last_attempt_ip { Faker::Internet.ip_v4_address }
+    last_ip { Faker::Internet.ip_v4_address }
+    last_login { Faker::Time.between(from: 1.year.ago, to: Time.now) }
+    locale { rand(0..10) }  # Assuming locale can be between 0 and 10
+    lock_country { Faker::Address.country_code }
+    locked { [0, 1].sample }
+    muteby { Faker::Internet.username(specifier: 5..50) }
+    mutereason { Faker::Lorem.sentence }
+    mutetime { Faker::Number.between(from: 0, to: 1000000) }
+    online { [0, 1].sample }
+    os { ['WIN', 'MAC', 'LIN'].sample }
+    recruiter { rand(0..1000) }
+    reg_mail { Faker::Internet.email }
+    salt { SecureRandom.bytes(32) }
+    session_key { SecureRandom.bytes(40) }
+    totaltime { Faker::Number.between(from: 0, to: 1000000) }
+    totp_secret { SecureRandom.bytes(128) }
+    username { Faker::Internet.unique.username(specifier: 5..32) }
+    verifier { SecureRandom.bytes(32) }
+
+    trait :locked do
+      locked { 1 }
+    end
+
+    trait :online do
+      online { 1 }
+    end
+
+    trait :with_totp do
+      totp_secret { SecureRandom.base64(128) }
     end
   end
 end

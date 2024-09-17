@@ -14,6 +14,6 @@
 module World
   class CreatureEquipTemplate < WorldApplicationRecord
     self.table_name = 'creature_equip_template'
-    self.primary_keys = %i[CreatureID ID]
+    self.primary_key = %i[CreatureID ID]
   end
 end

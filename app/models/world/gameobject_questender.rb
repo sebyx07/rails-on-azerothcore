@@ -10,6 +10,6 @@
 module World
   class GameobjectQuestender < WorldApplicationRecord
     self.table_name = 'gameobject_questender'
-    self.primary_keys = %i[id quest]
+    self.primary_key = %i[id quest]
   end
 end

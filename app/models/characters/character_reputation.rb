@@ -12,6 +12,6 @@
 module Characters
   class CharacterReputation < CharactersApplicationRecord
     self.table_name = 'character_reputation'
-    self.primary_keys = %i[faction guid]
+    self.primary_key = %i[faction guid]
   end
 end

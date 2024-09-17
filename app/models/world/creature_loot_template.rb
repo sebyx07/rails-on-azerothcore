@@ -18,6 +18,6 @@
 module World
   class CreatureLootTemplate < WorldApplicationRecord
     self.table_name = 'creature_loot_template'
-    self.primary_keys = %i[Entry Item GroupId Reference]
+    self.primary_key = %i[Entry Item GroupId Reference]
   end
 end

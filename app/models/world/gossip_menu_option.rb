@@ -22,6 +22,6 @@
 module World
   class GossipMenuOption < WorldApplicationRecord
     self.table_name = 'gossip_menu_option'
-    self.primary_keys = %i[MenuID OptionID]
+    self.primary_key = %i[MenuID OptionID]
   end
 end
