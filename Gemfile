@@ -45,4 +45,3 @@ end
 gem 'rice', '~> 4.3', '>= 4.3.1'
 gem 'colorize', '~> 1.1'
 gem 'sidekiq', '~> 7.3', '>= 7.3.2'
-

@@ -1,9 +1,10 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 require 'open3'
 
 def docker_compose_exists?
-  system("which docker-compose > /dev/null 2>&1")
+  system('which docker-compose > /dev/null 2>&1')
 end
 
 def execute_command(command)

@@ -11,6 +11,6 @@
 module World
   class PoolTemplate < WorldApplicationRecord
     self.table_name = 'pool_template'
-    self.primary_key =  :entry
+    self.primary_key = :entry
   end
 end

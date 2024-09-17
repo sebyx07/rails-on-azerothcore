@@ -12,6 +12,6 @@
 module World
   class PlayercreateinfoCastSpell < WorldApplicationRecord
     self.table_name = 'playercreateinfo_cast_spell'
-    self.primary_key =  [:raceMask, :classMask, :spell]
+    self.primary_key = [:raceMask, :classMask, :spell]
   end
 end

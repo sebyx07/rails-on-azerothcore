@@ -7,4 +7,6 @@ void Init_mod_ruby(){
     Init_ac_world_session();
     Init_ac_player();
     Init_ac_account();
+
+    Init_ac_player_script();
 }

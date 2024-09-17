@@ -12,6 +12,6 @@
 module World
   class PoolPool < WorldApplicationRecord
     self.table_name = 'pool_pool'
-    self.primary_key =  :pool_id
+    self.primary_key = :pool_id
   end
 end

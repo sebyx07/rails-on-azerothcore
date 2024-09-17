@@ -13,6 +13,6 @@
 module World
   class PlayercreateinfoSkill < WorldApplicationRecord
     self.table_name = 'playercreateinfo_skills'
-    self.primary_key =  [:raceMask, :classMask, :skill]
+    self.primary_key = [:raceMask, :classMask, :skill]
   end
 end

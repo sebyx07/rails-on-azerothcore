@@ -18,6 +18,6 @@
 module World
   class ProspectingLootTemplate < WorldApplicationRecord
     self.table_name = 'prospecting_loot_template'
-    self.primary_key =  [:Entry, :Item]
+    self.primary_key = [:Entry, :Item]
   end
 end
