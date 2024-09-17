@@ -22,7 +22,7 @@ public:
 private:
     bool enabled;
     static bool ruby_initialized;
-    fs::path module_path;
+    fs::path rails_path;
 
     void InitializeRubyVM();
     void CleanupRubyVM();

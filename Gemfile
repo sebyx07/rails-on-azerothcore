@@ -11,7 +11,7 @@ gem 'turbo-rails', '~> 2.0', '>= 2.0.7'
 gem 'stimulus-rails', '~> 1.3', '>= 1.3.4'
 gem 'hiredis-client', '~> 0.22.2'
 
-gem 'tzinfo-data', platforms: %i[ windows jruby ]
+gem 'tzinfo-data'
 
 gem 'bootsnap', '~> 1.18', '>= 1.18.4', require: false
 
@@ -27,3 +27,4 @@ end
 
 gem 'rubocop-rails_config', '~> 1.16'
 gem 'rice', '~> 4.3', '>= 4.3.1'
+gem 'colorize', '~> 1.1'

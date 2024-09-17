@@ -63,7 +63,7 @@ make -j $cpu_cores
 # Install
 make install
 
-cp /azerothcore/build/bin/modules/mod-ruby.so /azerothcore/modules/mod-ruby/out/mod_ruby.so
+cp /azerothcore/build/bin/modules/mod-ruby.so /azerothcore/build/bin/modules/mod_ruby.so
 
 touch $BUILD_SCRIPT_DIR/tmp/.compiled
 

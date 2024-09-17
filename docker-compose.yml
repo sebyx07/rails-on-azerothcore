@@ -1,23 +1,26 @@
 services:
   rails:
     container_name: roa_rails
+    working_dir: /rails
     build:
       context: .
-      dockerfile: ./RoA/docker/rails.Dockerfile
       args:
         USER_ID: ${DOCKER_USER_ID:-1000}
         GROUP_ID: ${DOCKER_GROUP_ID:-1000}
-        DOCKER_USER: ${DOCKER_USER:-rails}
+        DOCKER_USER: ${DOCKER_USER:-acore}
     ports:
       - "3000:3000"
     environment:
       - redis_url=redis://redis:6379
+      - LD_PRELOAD=/azerothcore/build/src/server/shared/libshared.so
     depends_on:
       - db
       - redis
     volumes:
       - .:/rails
       - bundle-cache:/usr/local/bundle
+      - ./RoA/build:/azerothcore-build
+      - ./ac-wotlk:/azerothcore
     networks:
       - app-network
     command: rails s -b 0.0.0.0
@@ -59,7 +62,7 @@ services:
   compiler:
     container_name: roa_compiler
     build:
-      dockerfile: RoA/docker/ac.Dockerfile
+      context: .
       args:
         USER_ID: ${DOCKER_USER_ID:-1000}
         GROUP_ID: ${DOCKER_GROUP_ID:-1000}
@@ -69,104 +72,96 @@ services:
       - ./RoA/build:/azerothcore-build
       - ./RoA/mod-ruby:/azerothcore/modules/mod-ruby
       - bundle-cache:/usr/local/bundle
-    command: ./bin/compiler
-#
-#  world:
-#    container_name: roa_world
-#    build:
-#      dockerfile: azerothcore-build/docker/ac.Dockerfile
-#      args:
-#        USER_ID: ${DOCKER_USER_ID:-1000}
-#        GROUP_ID: ${DOCKER_GROUP_ID:-1000}
-#        DOCKER_USER: ${DOCKER_USER:-acore}
-#    networks:
-#      - ac-network
-#    stdin_open: true
-#    tty: true
-#    env_file:
-#      - ${DOCKER_AC_ENV_FILE:-.env}
-#    environment:
-#      AC_DATA_DIR: "/azerothcore/env/dist/client-data"
-#      AC_LOGS_DIR: "/azerothcore/env/dist/logs"
-#    ports:
-#      - ${DOCKER_WORLD_EXTERNAL_PORT:-8085}:8085
-#      - ${DOCKER_SOAP_EXTERNAL_PORT:-7878}:7878
-#    volumes:
-#      - ./azerothcore:/azerothcore
-#      - ./azerothcore-build:/azerothcore-build
-#      - ./mod-ruby:/azerothcore/modules/mod-ruby
-#      - ${DOCKER_VOL_ETC:-./azerothcore/env/dist/etc}:/azerothcore/env/dist/etc
-#      - ${DOCKER_VOL_LOGS:-./azerothcore/env/dist/logs}:/azerothcore/env/dist/logs:delegated
-#      - bundle-cache:/usr/local/bundle
-#    depends_on:
-#      db:
-#        condition: service_healthy
-#      compiler:
-#        condition: service_started
-#      auth:
-#        condition: service_started
-#    command: ./bin/worldserver
-#
-#  console:
-#    deploy:
-#      replicas: 0
-#    container_name: roa_console
-#    build:
-#      dockerfile: azerothcore-build/docker/ac.Dockerfile
-#      args:
-#        USER_ID: ${DOCKER_USER_ID:-1000}
-#        GROUP_ID: ${DOCKER_GROUP_ID:-1000}
-#        DOCKER_USER: ${DOCKER_USER:-acore}
-#    networks:
-#      - ac-network
-#    stdin_open: true
-#    tty: true
-#    env_file:
-#      - ${DOCKER_AC_ENV_FILE:-.env}
-#    environment:
-#      AC_DATA_DIR: "/azerothcore/env/dist/client-data"
-#      AC_LOGS_DIR: "/azerothcore/env/dist/logs"
-#    ports:
-#      - ${DOCKER_WORLD_EXTERNAL_PORT:-8085}:8085
-#      - ${DOCKER_SOAP_EXTERNAL_PORT:-7878}:7878
-#    volumes:
-#      - ./azerothcore:/azerothcore
-#      - ./azerothcore-build:/azerothcore-build
-#      - ./mod-ruby:/azerothcore/modules/mod-ruby
-#      - ${DOCKER_VOL_ETC:-./azerothcore/env/dist/etc}:/azerothcore/env/dist/etc
-#      - ${DOCKER_VOL_LOGS:-./azerothcore/env/dist/logs}:/azerothcore/env/dist/logs:delegated
-#      - bundle-cache:/usr/local/bundle
-#
-#  auth:
-#    container_name: roa_auth
-#    build:
-#      dockerfile: azerothcore-build/docker/ac.Dockerfile
-#      args:
-#        USER_ID: ${DOCKER_USER_ID:-1000}
-#        GROUP_ID: ${DOCKER_GROUP_ID:-1000}
-#        DOCKER_USER: ${DOCKER_USER:-acore}
-#    networks:
-#      - ac-network
-#    tty: true
-#    env_file:
-#      - ${DOCKER_AC_ENV_FILE:-.env}
-#    environment:
-#      AC_LOGS_DIR: "/azerothcore/env/dist/logs"
-#      AC_TEMP_DIR: "/azerothcore/env/dist/temp"
-#    volumes:
-#      - ./azerothcore:/azerothcore
-#      - ./azerothcore-build:/azerothcore-build
-#      - ${DOCKER_VOL_ETC:-./azerothcore/env/dist/etc}:/azerothcore/env/dist/etc
-#      - ${DOCKER_VOL_LOGS:-./azerothcore/env/dist/logs}:/azerothcore/env/dist/logs:delegated
-#      - bundle-cache:/usr/local/bundle
-#    ports:
-#      - ${DOCKER_AUTH_EXTERNAL_PORT:-3724}:3724
-#    depends_on:
-#      db:
-#        condition: service_healthy
-#      compiler:
-#        condition: service_started
-#    command: ./bin/authserver
+    command: compiler
+
+  world:
+    container_name: roa_world
+    build:
+      context: .
+      args:
+        USER_ID: ${DOCKER_USER_ID:-1000}
+        GROUP_ID: ${DOCKER_GROUP_ID:-1000}
+        DOCKER_USER: ${DOCKER_USER:-acore}
+    networks:
+      - ac-network
+    stdin_open: true
+    tty: true
+    environment:
+      AC_DATA_DIR: "/azerothcore/env/dist/client-data"
+      AC_LOGS_DIR: "/azerothcore/env/dist/logs"
+    ports:
+      - ${DOCKER_WORLD_EXTERNAL_PORT:-8085}:8085
+      - ${DOCKER_SOAP_EXTERNAL_PORT:-7878}:7878
+    volumes:
+      - .:/rails
+      - bundle-cache:/usr/local/bundle
+      - ./ac-wotlk:/azerothcore
+      - ./RoA/build:/azerothcore-build
+      - ${DOCKER_VOL_ETC:-./ac-wotlk/env/dist/etc}:/azerothcore/env/dist/etc
+      - ${DOCKER_VOL_LOGS:-./ac-wotlk/env/dist/logs}:/azerothcore/env/dist/logs:delegated
+    depends_on:
+      db:
+        condition: service_healthy
+      compiler:
+        condition: service_started
+      auth:
+        condition: service_started
+    command: worldserver
+
+  console:
+    deploy:
+      replicas: 0
+    container_name: roa_console
+    build:
+      context: .
+      args:
+        USER_ID: ${DOCKER_USER_ID:-1000}
+        GROUP_ID: ${DOCKER_GROUP_ID:-1000}
+        DOCKER_USER: ${DOCKER_USER:-acore}
+    networks:
+      - ac-network
+    stdin_open: true
+    tty: true
+    environment:
+      AC_DATA_DIR: "/azerothcore/env/dist/client-data"
+      AC_LOGS_DIR: "/azerothcore/env/dist/logs"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/rails
+      - bundle-cache:/usr/local/bundle
+      - ./ac-wotlk:/azerothcore
+      - ./RoA/build:/azerothcore-build
+      - ${DOCKER_VOL_ETC:-./ac-wotlk/env/dist/etc}:/azerothcore/env/dist/etc
+      - ${DOCKER_VOL_LOGS:-./ac-wotlk/env/dist/logs}:/azerothcore/env/dist/logs:delegated
+  auth:
+    container_name: roa_auth
+    build:
+      context: .
+      args:
+        USER_ID: ${DOCKER_USER_ID:-1000}
+        GROUP_ID: ${DOCKER_GROUP_ID:-1000}
+        DOCKER_USER: ${DOCKER_USER:-acore}
+    networks:
+      - ac-network
+    tty: true
+    environment:
+      AC_LOGS_DIR: "/azerothcore/env/dist/logs"
+      AC_TEMP_DIR: "/azerothcore/env/dist/temp"
+    volumes:
+      - ./ac-wotlk:/azerothcore
+      - ./RoA/build:/azerothcore-build
+      - ${DOCKER_VOL_ETC:-./ac-wotlk/env/dist/etc}:/azerothcore/env/dist/etc
+      - ${DOCKER_VOL_LOGS:-./ac-wotlk/env/dist/logs}:/azerothcore/env/dist/logs:delegated
+    ports:
+      - ${DOCKER_AUTH_EXTERNAL_PORT:-3724}:3724
+    depends_on:
+      db:
+        condition: service_healthy
+      compiler:
+        condition: service_started
+    command: authserver
 
 volumes:
   mysql_data:

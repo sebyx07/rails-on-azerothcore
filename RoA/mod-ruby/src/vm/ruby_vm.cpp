@@ -7,8 +7,8 @@ RubyVM::RubyVM() : WorldScript("RubyVM")
     LOG_INFO("server.loading", "RubyVM: Module enabled: {}", enabled ? "true" : "false");
 
     // Set the fixed path for AzerothCore root
-    module_path = fs::path("/azerothcore") / "modules" / "mod-ruby";
-    LOG_INFO("server.loading", "RubyVM: Module path: {}", module_path.string());
+    rails_path = fs::path("/rails");
+    LOG_INFO("server.loading", "RubyVM: Module path: {}", rails_path.string());
 }
 
 void RubyVM::OnStartup()
@@ -24,7 +24,7 @@ void RubyVM::OnStartup()
     {
         Init_mod_ruby();
         LOG_INFO("server.loading", "RubyVM: Loading RailsOnAzerothCoreApplication");
-        ExecuteRubyScript("config/boot.rb");
+        ExecuteRubyScript((rails_path / "config" / "environment.rb").string().c_str());
         Start_scripts(); // bind events from c++ to ruby
     }
 }
@@ -60,12 +60,8 @@ void RubyVM::InitializeRubyVM()
         const char* version_str = StringValueCStr(ruby_version);
         LOG_INFO("server.loading", "Ruby VM initialized. Version: {}", version_str);
 
-        // Add the module's lib directory to Ruby's load path
-        std::string load_path_cmd = "$LOAD_PATH.unshift '" + (module_path / "lib").string() + "'";
-        rb_eval_string(load_path_cmd.c_str());
-
         // Set up Bundler if Gemfile exists
-        fs::path gemfile_path = module_path / "Gemfile";
+        fs::path gemfile_path = rails_path / "Gemfile";
         if (fs::exists(gemfile_path))
         {
             LOG_INFO("server.loading", "RubyVM: Gemfile found");
@@ -92,7 +88,7 @@ void RubyVM::CleanupRubyVM()
 
 void RubyVM::ExecuteRubyScript(const char* filename)
 {
-    fs::path script_path = module_path / "lib" / filename;
+    fs::path script_path = rails_path / "lib" / filename;
     LOG_INFO("scripts.rubyvm", "RubyVM: Attempting to execute {}", script_path.string());
 
     int state;

@@ -1,0 +1,7 @@
+#!/bin/bash
+set -e
+
+WORLDSERVER="/azerothcore/build/bin/worldserver"
+CONFIG="/azerothcore-build/config/worldserver-console.conf"
+
+docker-compose run console $WORLDSERVER --config $CONFIG

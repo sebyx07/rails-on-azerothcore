@@ -1,6 +1,4 @@
-#!/usr/bin/env ruby
-# frozen_string_literal: true
+#!/bin/bash
+set -e
 
-APP_PATH = File.expand_path('../config/application', __dir__)
-require_relative '../config/boot'
-require 'rails/commands'
+docker-compose run rails rails $@

@@ -13,13 +13,13 @@ RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
     clang \
-    libmysqlclient-dev \
+    default-libmysqlclient-dev \
     libssl-dev \
     libbz2-dev \
     libreadline-dev \
     libncurses-dev \
     libboost-all-dev \
-    mysql-client \
+    default-mysql-client \
     ccache \
     curl \
     unzip \
@@ -46,7 +46,9 @@ RUN apt-get update && apt-get install -y \
 RUN groupadd --gid $GROUP_ID $DOCKER_USER \
     && useradd --uid $USER_ID --gid $GROUP_ID -m $DOCKER_USER \
     && mkdir -p /azerothcore && chown $DOCKER_USER:$DOCKER_USER /azerothcore \
-    && mkdir -p /azerothcore-build && chown $DOCKER_USER:$DOCKER_USER /azerothcore-build
+    && mkdir -p /azerothcore-build && chown $DOCKER_USER:$DOCKER_USER /azerothcore-build \
+    && mkdir -p /rails && chown $DOCKER_USER:$DOCKER_USER /rails \
+    && mkdir -p /usr/local/bundle && chown $DOCKER_USER:$DOCKER_USER /usr/local/bundle
 
 USER $DOCKER_USER
 WORKDIR /home/$DOCKER_USER
@@ -92,10 +94,10 @@ ENV LIBRARY_PATH="$RUBY_LIB_PATH:$LIBRARY_PATH"
 ENV C_INCLUDE_PATH="$RUBY_INCLUDE_PATH:$C_INCLUDE_PATH"
 ENV CPLUS_INCLUDE_PATH="$RUBY_INCLUDE_PATH:$CPLUS_INCLUDE_PATH"
 ENV RUBYLIB="$RUBY_LIB_PATH"
-ENV LD_LIBRARY_PATH="/azerothcore/build/src/server/shared/:$RUBY_LIB_PATH:$LD_LIBRARY_PATH"
+ENV LD_LIBRARY_PATH="/azerothcore/build/src/server/shared/:$RUBY_LIB_PATH:/usr/lib/x86_64-linux-gnu/:$LD_LIBRARY_PATH"
 ENV LD_LIBRARY_PATH="/azerothcore/build/src/server/database/:$LD_LIBRARY_PATH"
 ENV LD_LIBRARY_PATH="/azerothcore/build/src/common/:$LD_LIBRARY_PATH"
 
-WORKDIR /azerothcore-build
+ENV PATH="/rails/bin/ruby:/azerothcore-build/bin:$PATH"
 
 CMD ["/bin/bash"]
