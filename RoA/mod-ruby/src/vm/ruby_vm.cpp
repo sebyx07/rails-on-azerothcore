@@ -23,9 +23,8 @@ void RubyVM::OnStartup()
     if (ruby_initialized)
     {
         Init_mod_ruby();
-        LOG_INFO("server.loading", "RubyVM: Loading RailsOnAzerothCoreApplication");
-        ExecuteRubyScript((rails_path / "config" / "environment.rb").string().c_str());
-        Start_scripts(); // bind events from c++ to ruby
+        LOG_INFO("server.loading", "RubyVM: Loading Rails ENV");
+        ExecuteRubyScript((rails_path / "config" / "environment_wow.rb").string().c_str());
     }
 }
 

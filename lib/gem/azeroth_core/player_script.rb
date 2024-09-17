@@ -18,6 +18,7 @@ module AzerothCore
         handler = instance.method(method_name)
 
         @event_handlers[event] << handler
+        puts "Registered handler for #{event}"
         AzerothCore::PlayerScriptCPP.register_handler(event, handler)
       end
     end

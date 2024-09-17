@@ -26,6 +26,8 @@ message(STATUS "RUBY_LIBRARY: ${RUBY_LIBRARY}")
 file(GLOB WRAP_SOURCES
     "src/wrap/*.cpp"
     "src/wrap/*.hpp"
+    "src/scripts/*.hpp"
+    "src/scripts/*.cpp"
 )
 
 # Add the loader file
@@ -42,6 +44,7 @@ target_include_directories(mod-ruby PRIVATE
     ${CMAKE_SOURCE_DIR}/src/server/shared
     ${CMAKE_SOURCE_DIR}/src/common
     ${CMAKE_CURRENT_SOURCE_DIR}/src/wrap
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/scripts
     ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 

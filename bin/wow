@@ -1,0 +1,47 @@
+#!/bin/bash
+set -e
+
+# URL of the file to download
+FILE_URL="https://eu-download.wowdl.net/download/825160/e708309238bd55933ff31f7556ddec39"
+WOW_PATH="./wow-client/World of Warcraft 3.3.5a.12340 enUS"
+WOW_EXE_PATH="$WOW_PATH/Wow.exe"
+ADDONS_PATH="$WOW_PATH/Interface/AddOns"
+
+# Directory to save the downloaded file
+DOWNLOAD_DIR="/tmp"
+
+# Final destination for the client data
+FINAL_DIR="./wow-client"
+
+# Filename to save the downloaded file
+FILENAME="$DOWNLOAD_DIR/wow_client.zip"
+
+# Check if the final directory already exists and has content
+if [ -d "$FINAL_DIR" ] && [ "$(ls -A $FINAL_DIR)" ]; then
+    echo "The directory $FINAL_DIR already exists and is not empty."
+    echo "Skipping download and extraction. If you want to re-download, please remove or empty the directory first."
+
+    wine "$WOW_EXE_PATH"
+else
+  # Create final directory if it does not exist
+  mkdir -p "$FINAL_DIR"
+
+  # Download the file with progress
+  echo "Downloading WoW client to $FILENAME ..."
+  curl -L -# -o "$FILENAME" "$FILE_URL"
+
+  # Unzip the downloaded file to the final destination
+  echo "Unzipping file to $FINAL_DIR ..."
+  unzip -o "$FILENAME" -d "$FINAL_DIR"
+
+  # Remove the downloaded zip file
+  echo "Cleaning up..."
+  rm "$FILENAME"
+
+  echo "WoW client download and extraction complete. Files are now in $FINAL_DIR"
+
+  cd "$ADDONS_PATH"
+  git clone https://github.com/LightDestory/AzerothCoreAdmin.git
+
+  wine "$WOW_EXE_PATH"
+fi

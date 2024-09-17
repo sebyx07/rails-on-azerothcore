@@ -8,6 +8,7 @@
 #include "ruby.h"
 #include "ObjectAccessor.h"
 #include "ac_account.hpp"
+#include "ac_player.hpp"
 #include <unordered_map>
 #include <vector>
 #include <string>
@@ -46,6 +47,5 @@ VALUE ConvertToRuby(const void* ptr, const std::string& type);
 
 // Ruby initialization functions
 void Init_ac_player_script();
-void InitAcPlayerScriptSystem();
 
 #endif // AC_PLAYER_SCRIPT_HPP

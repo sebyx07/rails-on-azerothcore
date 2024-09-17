@@ -1,0 +1,18 @@
+#!/bin/bash
+set -e
+
+# Function to stop all Docker containers
+stop_all_containers() {
+    echo "Stopping all Docker containers..."
+    docker stop $(docker ps -q) 2>/dev/null || echo "No running containers found."
+}
+
+# Check if the script is called with the "kill" argument
+if [[ $1 == "kill" ]]; then
+    stop_all_containers
+    echo "All Docker containers have been stopped."
+else
+    echo "Usage: $0 kill"
+    echo "This script stops all running Docker containers when called with the 'kill' argument."
+    exit 1
+fi

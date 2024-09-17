@@ -22,8 +22,15 @@ void AcPlayerWrapper::SetLevel(uint32 level)
 
 void AcPlayerWrapper::SendMessage(const std::string& message, const std::string& prefix) const
 {
-    std::string fullMessage = prefix + ": " + message;
-    ChatHandler(m_player->GetSession()).PSendSysMessage("%s", fullMessage.c_str());
+    if (m_player && m_player->GetSession())
+    {
+        std::string fullMessage = prefix + ": " + message;
+        ChatHandler(m_player->GetSession()).PSendSysMessage(fullMessage.c_str());
+    }
+    else
+    {
+        std::cerr << "Error: Unable to send message. Player or session is null." << std::endl;
+    }
 }
 
 AcPlayerWrapper& AcPlayerWrapper::IncreaseLevel(uint32 amount)
@@ -85,6 +92,7 @@ static VALUE rb_ac_player_set_level(VALUE self, VALUE level)
 
 static VALUE rb_ac_player_send_message(int argc, VALUE* argv, VALUE self)
 {
+    std::cout << "rb_ac_player_send_message" << std::endl;
     AcPlayerWrapper* wrapper;
     Data_Get_Struct(self, AcPlayerWrapper, wrapper);
     VALUE message, prefix;

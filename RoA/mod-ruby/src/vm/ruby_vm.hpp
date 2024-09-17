@@ -5,7 +5,6 @@
 #include "Config.h"
 #include "Log.h"
 #include "../wrap/init_mod_ruby.hpp"
-#include "../scripts/init_scripts.hpp"
 #include <cstring>
 #include <ruby.h>
 #include <filesystem>
