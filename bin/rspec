@@ -14,7 +14,7 @@ rescue LoadError
 end
 
 if docker_compose_exists?
-  system("docker-compose run rails bin/ruby/rails #{ARGV.join(' ')}")
+  system("docker-compose run rails bin/ruby/rspec #{ARGV.join(' ')}")
 else
-  execute_command('bin/ruby/rails')
+  execute_command('bin/ruby/rspec')
 end

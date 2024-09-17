@@ -1,11 +1,12 @@
-FROM ubuntu:22.04
-
+# Base image
+FROM ubuntu:22.04 as base
 ARG DEBIAN_FRONTEND=noninteractive
 ARG USER_ID=1000
 ARG GROUP_ID=1000
 ARG DOCKER_USER=acore
 
 # Install dependencies
+FROM base as dependencies
 RUN apt-get update && apt-get install -y \
     git \
     cmake \
@@ -24,7 +25,6 @@ RUN apt-get update && apt-get install -y \
     curl \
     unzip \
     inotify-tools \
-    # Dependencies for Ruby build
     autoconf \
     bison \
     build-essential \
@@ -35,14 +35,14 @@ RUN apt-get update && apt-get install -y \
     libyaml-dev \
     zlib1g-dev \
     libgmp-dev \
-    # New dependencies
     libjemalloc-dev \
     libpq-dev \
     pkg-config \
     ninja-build \
     && rm -rf /var/lib/apt/lists/*
 
-# Create user
+# Set up user
+FROM dependencies as user_setup
 RUN groupadd --gid $GROUP_ID $DOCKER_USER \
     && useradd --uid $USER_ID --gid $GROUP_ID -m $DOCKER_USER \
     && mkdir -p /azerothcore && chown $DOCKER_USER:$DOCKER_USER /azerothcore \
@@ -54,10 +54,12 @@ USER $DOCKER_USER
 WORKDIR /home/$DOCKER_USER
 
 # Install Rust
+FROM user_setup as rust_install
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 ENV PATH="/home/$DOCKER_USER/.cargo/bin:$PATH"
 
 # Install rbenv and ruby-build
+FROM rust_install as rbenv_install
 RUN git clone https://github.com/rbenv/rbenv.git ~/.rbenv \
     && cd ~/.rbenv && src/configure && make -C src \
     && echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc \
@@ -68,11 +70,13 @@ RUN git clone https://github.com/rbenv/rbenv.git ~/.rbenv \
 RUN echo 'export MALLOC_CONF="dirty_decay_ms:2000,narenas:2,background_thread:true"' >> ~/.bashrc
 
 # Install Ruby 3.3.4 with YJIT and jemalloc
+FROM rbenv_install as ruby_install
 ENV RUBY_CONFIGURE_OPTS="--with-jemalloc --enable-yjit"
 RUN ~/.rbenv/bin/rbenv install 3.3.4 \
     && ~/.rbenv/bin/rbenv global 3.3.4
 
-# Set up environment variables
+# Final stage
+FROM ruby_install as final
 ENV PATH="/home/$DOCKER_USER/.rbenv/shims:/home/$DOCKER_USER/.rbenv/bin:$PATH"
 ENV CC=clang
 ENV CXX=clang++
@@ -99,5 +103,8 @@ ENV LD_LIBRARY_PATH="/azerothcore/build/src/server/database/:$LD_LIBRARY_PATH"
 ENV LD_LIBRARY_PATH="/azerothcore/build/src/common/:$LD_LIBRARY_PATH"
 
 ENV PATH="/rails/bin/ruby:/azerothcore-build/bin:$PATH"
+ENV LANG="C.UTF-8"
+ENV LANGUAGE="en_US:en"
+ENV SPRING_SOCKET=/rails/tmp/spring.sock
 
 CMD ["/bin/bash"]

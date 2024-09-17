@@ -25,6 +25,25 @@ end
 
 # end rails
 
-gem 'rubocop-rails_config', '~> 1.16'
+group :development do
+  gem 'rubocop-rails_config', '~> 1.16'
+  gem 'spring-commands-rspec', '~> 1.0', '>= 1.0.4'
+  gem 'annotate', '~> 3.2'
+end
+
+group :development, :test do
+  gem 'rspec-rails', '~> 7.0', '>= 7.0.1'
+  gem 'factory_bot_rails', '~> 6.4', '>= 6.4.3'
+  gem 'faker', '~> 3.4', '>= 3.4.2'
+  gem 'spring', '~> 4.2', '>= 4.2.1'
+end
+
+group :test do
+  gem 'database_cleaner', '~> 2.0', '>= 2.0.2'
+  gem 'shoulda-matchers', '~> 6.4'
+end
+
 gem 'rice', '~> 4.3', '>= 4.3.1'
 gem 'colorize', '~> 1.1'
+gem 'sidekiq', '~> 7.3', '>= 7.3.2'
+
