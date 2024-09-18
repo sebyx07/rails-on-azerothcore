@@ -39,9 +39,19 @@ void AcPlayerScriptMgr::RegisterRubyHandler(const char* event, VALUE handler)
     m_rubyHandlers[event].push_back(handler);
 }
 
+void AcPlayerScriptMgr::UnregisterRubyHandler(const char* event, VALUE handler)
+{
+    auto it = m_rubyHandlers.find(event);
+    if (it != m_rubyHandlers.end())
+    {
+        auto& handlers = it->second;
+        handlers.erase(std::remove(handlers.begin(), handlers.end(), handler), handlers.end());
+    }
+}
+
 void AcPlayerScriptMgr::RegisterEventInfo(const char* event, const std::vector<std::string>& argTypes)
 {
-    m_eventInfo[event] = {argTypes};
+    m_eventInfo[event] = EventInfo{argTypes};
 }
 
 template<typename... Args>
@@ -214,6 +224,18 @@ static VALUE rb_ac_player_script_register_handler(VALUE self, VALUE event, VALUE
     return self;
 }
 
+static VALUE rb_ac_player_script_unregister_handler(VALUE self, VALUE event, VALUE handler)
+{
+    Check_Type(event, T_STRING);
+    if (!rb_obj_is_kind_of(handler, rb_cMethod) && !rb_obj_is_kind_of(handler, rb_cProc))
+    {
+        rb_raise(rb_eTypeError, "handler must be a Method or Proc");
+    }
+
+    AcPlayerScriptMgr::instance()->UnregisterRubyHandler(StringValueCStr(event), handler);
+    return self;
+}
+
 void Init_ac_player_script()
 {
     std::cout << "Initializing AcPlayerScriptMgr..." << std::endl;
@@ -222,6 +244,7 @@ void Init_ac_player_script()
     VALUE rb_cPlayerScript = rb_define_class_under(rb_mAzerothCore, "PlayerScriptCPP", rb_cObject);
 
     rb_define_singleton_method(rb_cPlayerScript, "register_handler", RUBY_METHOD_FUNC(rb_ac_player_script_register_handler), 2);
+    rb_define_singleton_method(rb_cPlayerScript, "unregister_handler", RUBY_METHOD_FUNC(rb_ac_player_script_unregister_handler), 2);
 
     // Register event info
     AcPlayerScriptMgr::instance()->RegisterEventInfo("on_login", {"Player*", "uint32*"});

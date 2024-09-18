@@ -14,6 +14,9 @@ public:
     RubyVM();
     void OnStartup() override;
     void OnShutdown() override;
+    void OnUpdate(uint32 diff) override;
+
+    void CheckForReloads();
 
 private:
     bool enabled;
@@ -24,6 +27,8 @@ private:
     void InitializeRubyVM();
     void CleanupRubyVM();
     void ExecuteRubyScript(const char* filename);
+
+    uint32 updateTimer;
 };
 
 // Function to add all scripts

@@ -5,7 +5,7 @@
 #include <cstring>
 #include <ruby.h>
 
-RubyVM::RubyVM() : WorldScript("RubyVM")
+RubyVM::RubyVM() : WorldScript("RubyVM"), updateTimer(0)
 {
     LOG_INFO("server.loading", "RubyVM: Constructor called.");
     enabled = sConfigMgr->GetOption<bool>("ModRuby.Enable", false);
@@ -54,6 +54,29 @@ void RubyVM::OnShutdown()
     }
 
     CleanupRubyVM();
+}
+
+void RubyVM::OnUpdate(uint32 diff)
+{
+    if (!enabled || !ruby_initialized)
+    {
+        return;
+    }
+
+    updateTimer += diff;
+    if (updateTimer >= 100)  // Check every 100ms
+    {
+        CheckForReloads();
+        updateTimer = 0;
+    }
+}
+
+void RubyVM::CheckForReloads()
+{
+    if (watcher && watcher->checkAndReload())
+    {
+        LOG_INFO("server.loading", "RubyVM: Rails reloaded due to file changes");
+    }
 }
 
 void RubyVM::InitializeRubyVM()

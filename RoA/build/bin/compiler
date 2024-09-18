@@ -5,7 +5,7 @@ WATCH_DIR="/azerothcore/modules"
 DOWNLOAD_CLIENT_DATA_SCRIPT="/azerothcore-build/bin/client-data-download"
 COMPILE_SCRIPT="/azerothcore-build/bin/compile-ac"
 COMPILED_FLAG="/azerothcore-build/tmp/.compiled"
-DEBOUNCE_SECONDS=15
+DEBOUNCE_SECONDS=30
 
 # Function to perform compilation and manage the flag file
 compile_and_manage_flag() {

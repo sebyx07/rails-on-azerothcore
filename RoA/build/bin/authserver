@@ -21,8 +21,21 @@ start_authserver() {
 
 stop_authserver() {
     if [ ! -z "$AUTHSERVER_PID" ]; then
-        echo "Stopping authserver (PID: $AUTHSERVER_PID)..."
-        kill $AUTHSERVER_PID 2>/dev/null || true
+        echo "Gracefully stopping authserver (PID: $AUTHSERVER_PID)..."
+        kill -SIGTERM $AUTHSERVER_PID
+
+        # Wait for the process to terminate, with a timeout
+        timeout=60
+        while kill -0 $AUTHSERVER_PID 2>/dev/null; do
+            if [ $timeout -le 0 ]; then
+                echo "Timeout reached. Forcing shutdown..."
+                kill -SIGKILL $AUTHSERVER_PID
+                break
+            fi
+            sleep 1
+            ((timeout--))
+        done
+
         wait $AUTHSERVER_PID 2>/dev/null || true
         echo "Authserver stopped."
     fi

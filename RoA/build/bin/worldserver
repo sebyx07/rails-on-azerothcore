@@ -21,8 +21,21 @@ start_worldserver() {
 
 stop_worldserver() {
     if [ ! -z "$WORLDSERVER_PID" ]; then
-        echo "Stopping worldserver (PID: $WORLDSERVER_PID)..."
-        kill $WORLDSERVER_PID 2>/dev/null || true
+        echo "Gracefully stopping worldserver (PID: $WORLDSERVER_PID)..."
+        kill -SIGTERM $WORLDSERVER_PID
+
+        # Wait for the process to terminate, with a timeout
+        timeout=60
+        while kill -0 $WORLDSERVER_PID 2>/dev/null; do
+            if [ $timeout -le 0 ]; then
+                echo "Timeout reached. Forcing shutdown..."
+                kill -SIGKILL $WORLDSERVER_PID
+                break
+            fi
+            sleep 1
+            ((timeout--))
+        done
+
         wait $WORLDSERVER_PID 2>/dev/null || true
         echo "Worldserver stopped."
     fi
