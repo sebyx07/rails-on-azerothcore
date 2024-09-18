@@ -3,6 +3,7 @@
 roa_so_path = '/azerothcore/build/bin/modules/mod_ruby.so'
 
 Rails.application.config.before_initialize do
+  next if ENV['ENV_WOW']
   if File.exist?(roa_so_path)
     puts 'Loading ROA in Rails'
     require roa_so_path

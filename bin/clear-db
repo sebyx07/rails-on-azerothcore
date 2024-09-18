@@ -1,0 +1,8 @@
+#!/bin/bash
+set -e
+
+docker-compose down
+echo "Removing the database container..."
+docker rm roa_db -f
+echo "Removing the database volume..."
+docker volume rm roa_mysql_data -f

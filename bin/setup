@@ -2,5 +2,4 @@
 set -e
 
 docker-compose run rails bundle install
-docker-compose run rails rake db:setup
 docker-compose run compiler compile-ac

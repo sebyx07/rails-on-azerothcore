@@ -1,4 +1,11 @@
 #include "ac_player_script.hpp"
+#include "Player.h"
+#include "Chat.h"
+#include "Config.h"
+#include <ruby/encoding.h>
+#include "ObjectAccessor.h"
+#include "ac_account.hpp"
+#include "ac_player.hpp"
 
 AcPlayerScriptMgr::AcPlayerScriptMgr() : PlayerScript("AcPlayerScriptMgr")
 {

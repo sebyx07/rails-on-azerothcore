@@ -36,7 +36,7 @@ services:
     networks:
       - app-network
       - ac-network
-    command: --innodb-use-native-aio=0
+    command: --innodb-use-native-aio=1
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
     healthcheck:
@@ -175,8 +175,10 @@ services:
       - redis_url=redis://redis:6379
       - LD_PRELOAD=/azerothcore/build/src/server/shared/libshared.so
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     volumes:
       - .:/rails
       - bundle-cache:/usr/local/bundle

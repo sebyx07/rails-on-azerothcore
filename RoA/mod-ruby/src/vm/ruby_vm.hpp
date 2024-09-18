@@ -2,12 +2,9 @@
 #define RUBY_VM_HPP
 
 #include "ScriptMgr.h"
-#include "Config.h"
-#include "Log.h"
-#include "../wrap/init_mod_ruby.hpp"
-#include <cstring>
-#include <ruby.h>
+#include "rails_file_watcher.hpp"
 #include <filesystem>
+#include <memory>
 
 namespace fs = std::filesystem;
 
@@ -22,6 +19,7 @@ private:
     bool enabled;
     static bool ruby_initialized;
     fs::path rails_path;
+    std::unique_ptr<RailsFileWatcher> watcher;
 
     void InitializeRubyVM();
     void CleanupRubyVM();

@@ -1,4 +1,9 @@
 #include "ruby_vm.hpp"
+#include "Config.h"
+#include "Log.h"
+#include "init_mod_ruby.hpp"
+#include <cstring>
+#include <ruby.h>
 
 RubyVM::RubyVM() : WorldScript("RubyVM")
 {
@@ -25,6 +30,10 @@ void RubyVM::OnStartup()
         Init_mod_ruby();
         LOG_INFO("server.loading", "RubyVM: Loading Rails ENV");
         ExecuteRubyScript((rails_path / "config" / "environment_wow.rb").string().c_str());
+
+        watcher = std::make_unique<RailsFileWatcher>(rails_path);
+        watcher->start();
+        LOG_INFO("server.loading", "RubyVM: File watcher started");
     }
 }
 
@@ -37,6 +46,12 @@ void RubyVM::OnShutdown()
 
     LOG_INFO("server.loading", "RubyVM: Unloading RailsOnAzerothCoreApplication");
     ExecuteRubyScript("config/shutdown.rb");
+
+    if (watcher)
+    {
+        watcher->stop();
+        LOG_INFO("server.loading", "RubyVM: File watcher stopped");
+    }
 
     CleanupRubyVM();
 }

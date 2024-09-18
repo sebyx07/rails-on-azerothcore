@@ -2,14 +2,7 @@
 #define AC_PLAYER_SCRIPT_HPP
 
 #include "ScriptMgr.h"
-#include "Player.h"
-#include "Chat.h"
-#include "Config.h"
-#include "ruby.h"
-#include "ruby/encoding.h"
-#include "ObjectAccessor.h"
-#include "ac_account.hpp"
-#include "ac_player.hpp"
+#include <ruby.h>
 #include <unordered_map>
 #include <vector>
 #include <string>
