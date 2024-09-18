@@ -37,8 +37,8 @@ module Roa
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("lib", "gem")
-    config.autoload_paths << Rails.root.join("lib", "gem")
-    config.eager_load_paths << Rails.root.join("app", "scripts")
+    config.autoload_paths << Rails.root.join('lib', 'gem')
+    config.eager_load_paths << Rails.root.join('app', 'scripts')
 
     # Don't generate system test files.
     config.generators.system_tests = nil

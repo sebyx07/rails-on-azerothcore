@@ -45,3 +45,4 @@ end
 gem 'rice', '~> 4.3', '>= 4.3.1'
 gem 'colorize', '~> 1.1'
 gem 'sidekiq', '~> 7.3', '>= 7.3.2'
+gem 'rb-inotify', '~> 0.11.1'

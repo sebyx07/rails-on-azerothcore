@@ -2,10 +2,17 @@
 
 roa_so_path = '/azerothcore/build/bin/modules/mod_ruby.so'
 
-if defined?(AzerothCore::Player)
-elsif File.exist?(roa_so_path)
-  puts 'Loading ROA in rails'
-  require roa_so_path
-else
-  puts 'ROA not found'
+Rails.application.config.before_initialize do
+  if File.exist?(roa_so_path)
+    puts 'Loading ROA in Rails'
+    require roa_so_path
+  else
+    puts 'ROA not found'
+  end
+end
+
+unless Rails.application.config.eager_load
+  Rails.application.config.to_prepare do
+    Rails.autoloaders.main.eager_load_dir("#{Rails.root}/app/scripts")
+  end
 end
