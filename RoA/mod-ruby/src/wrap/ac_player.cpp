@@ -92,7 +92,6 @@ static VALUE rb_ac_player_set_level(VALUE self, VALUE level)
 
 static VALUE rb_ac_player_send_message(int argc, VALUE* argv, VALUE self)
 {
-    std::cout << "rb_ac_player_send_message" << std::endl;
     AcPlayerWrapper* wrapper;
     Data_Get_Struct(self, AcPlayerWrapper, wrapper);
     VALUE message, prefix;

@@ -6,6 +6,7 @@
 #include "Chat.h"
 #include "Config.h"
 #include "ruby.h"
+#include "ruby/encoding.h"
 #include "ObjectAccessor.h"
 #include "ac_account.hpp"
 #include "ac_player.hpp"
@@ -27,7 +28,6 @@ public:
     // Override PlayerScript virtual methods
     void OnLogin(Player* player) override;
     void OnLogout(Player* player) override;
-    void OnChat(Player* player, uint32 type, uint32 lang, std::string& msg) override;
     void OnLevelChanged(Player* player, uint8 oldLevel) override;
 
     // Ruby integration methods
@@ -40,10 +40,9 @@ private:
 
     template<typename... Args>
     void CallRubyHandlers(const char* event, Args... args);
-};
 
-// Helper function to convert C++ types to Ruby
-VALUE ConvertToRuby(const void* ptr, const std::string& type);
+    VALUE ConvertToRuby(const void* ptr, const std::string& type);
+};
 
 // Ruby initialization functions
 void Init_ac_player_script();

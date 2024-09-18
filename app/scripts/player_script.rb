@@ -13,15 +13,11 @@ class PlayerScript < AzerothCore::PlayerScript
   def on_login(player, account_id)
     puts "#{player.name} - #{account_id} has logged in!"
     player.send_message("Welcome to the server!")
+    player.level = 30
   end
 
   # This method is called when a player logs out
   def on_logout(player)
     puts "#{player.name} has logged out!"
-  end
-
-  # This method is called when a player sends a chat message
-  def on_chat(player, message, type)
-    puts "#{player.name} said: #{message}"
   end
 end
