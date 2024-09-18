@@ -5,14 +5,11 @@ WATCH_DIR="/azerothcore/modules"
 DOWNLOAD_CLIENT_DATA_SCRIPT="/azerothcore-build/bin/client-data-download"
 COMPILE_SCRIPT="/azerothcore-build/bin/compile-ac"
 COMPILED_FLAG="/azerothcore-build/tmp/.compiled"
-DEBOUNCE_SECONDS=5
-COMPILE_LOCK="/tmp/azerothcore_compile.lock"
+DEBOUNCE_SECONDS=15
 
 # Function to perform compilation and manage the flag file
 compile_and_manage_flag() {
     echo "Triggering compilation..."
-    # Remove the flag file before compilation starts
-    rm -f "$COMPILED_FLAG"
     if bash $COMPILE_SCRIPT; then
         echo "Compilation completed successfully. Touching $COMPILED_FLAG"
         touch "$COMPILED_FLAG"
@@ -38,24 +35,19 @@ if [ ! -f "$COMPILED_FLAG" ]; then
     compile_and_manage_flag
 fi
 
-echo "Watching $WATCH_DIR for changes..."
+echo "Watching $WATCH_DIR for changes in src/**/*.cpp and src/**/*.hpp files..."
 
-last_compile_time=$(date +%s)
+last_compile_time=0
 
 # Start inotifywait in the background and save its PID
 inotifywait -m -r -e modify,create,delete,move --format '%w%f' "$WATCH_DIR" |
 while read -r file; do
-    if [[ "$file" =~ \.(cpp|h|hpp)$ ]]; then
+    if [[ "$file" =~ ^.*/src/.*\.(cpp|hpp)$ ]]; then
         current_time=$(date +%s)
-        if (( current_time - last_compile_time >= DEBOUNCE_SECONDS )); then
+        if (( current_time - last_compile_time >= DEBOUNCE_SECONDS )) || (( last_compile_time == 0 )); then
             echo "Change detected in $file."
-
-            # Use flock to ensure only one compilation process runs at a time
-            (
-                flock -n 9 || exit 1
-                compile_and_manage_flag
-                last_compile_time=$current_time
-            ) 9>"$COMPILE_LOCK"
+            compile_and_manage_flag
+            last_compile_time=$current_time
         fi
     fi
 done &

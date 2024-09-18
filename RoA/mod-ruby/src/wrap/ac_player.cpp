@@ -86,8 +86,21 @@ static VALUE rb_ac_player_set_level(VALUE self, VALUE level)
 {
     AcPlayerWrapper* wrapper;
     Data_Get_Struct(self, AcPlayerWrapper, wrapper);
-    wrapper->SetLevel(NUM2UINT(level));
-    return level;
+
+    Player* player = wrapper->GetPlayer();
+
+    uint8 newLevel = NUM2UINT(level);
+
+    player->SetLevel(newLevel);
+
+    player->SetUInt32Value(PLAYER_XP, 0);
+
+    player->UpdateSkillsForLevel();
+    player->InitTalentForLevel();
+
+    player->SaveToDB(false, false);
+
+    return UINT2NUM(newLevel);
 }
 
 static VALUE rb_ac_player_send_message(int argc, VALUE* argv, VALUE self)
