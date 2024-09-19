@@ -95,5 +95,7 @@ module Characters
   class Character < CharactersApplicationRecord
     self.table_name = 'characters'
     self.primary_key = 'guid'
+
+    self.ignored_columns = %w[class]
   end
 end

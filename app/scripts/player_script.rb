@@ -5,6 +5,8 @@ class PlayerScript < AzerothCore::PlayerScript
   def on_login
     account_id = current_player.account_id
 
+    puts current_player.character_id
+
     puts "#{current_player.name} - #{account_id}! has logged in!"
     current_player.send_message('Welcome to the server!')
     current_player.level = 33
@@ -16,8 +18,11 @@ class PlayerScript < AzerothCore::PlayerScript
   end
 
   def on_chat
-    puts current_player.account.inspect
+    # puts "account: #{current_player.account.inspect}"
+    # puts "character: #{current_player.character.inspect}"
     puts "#{current_player.name} says now: #{params[:msg]}"
+    puts "class: #{current_player.character.attributes}"
+    puts "level: #{current_player.character.level}"
   end
 
   private

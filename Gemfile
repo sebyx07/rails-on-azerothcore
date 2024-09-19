@@ -35,6 +35,7 @@ group :development, :test do
   gem 'factory_bot_rails', '~> 6.4', '>= 6.4.3'
   gem 'faker', '~> 3.4', '>= 3.4.2'
   gem 'spring', '~> 4.2', '>= 4.2.1'
+  gem 'pry-rails', '~> 0.3.11'
 end
 
 group :test do

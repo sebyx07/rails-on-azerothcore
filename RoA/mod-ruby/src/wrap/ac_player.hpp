@@ -22,6 +22,7 @@ public:
     void SendMessage(const std::string& message, const std::string& prefix = "System") const;
     AcPlayerWrapper& IncreaseLevel(uint32 amount = 1);
     uint32 GetAccountId() const;
+    uint32 GetCharacterId() const;
 };
 
 extern VALUE rb_cAcPlayer;
