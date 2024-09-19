@@ -44,7 +44,7 @@ module Roa
       end
     end
 
-    config.eager_load_paths << Rails.root.join('app', 'scripts')
+    config.eager_load_paths << Rails.root.join('app', 'wow')
 
     # Don't generate system test files.
     config.generators.system_tests = nil
