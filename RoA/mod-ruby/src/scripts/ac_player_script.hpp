@@ -21,7 +21,7 @@ public:
 
     void RegisterRubyHandler(const char* event, VALUE handler);
     void UnregisterRubyHandler(const char* event, VALUE handler);
-    void RegisterEventInfo(const char* event, const std::vector<std::string>& argTypes);
+    void RegisterEventInfo(const char* event, const std::vector<std::string>& argTypes, const std::vector<std::string>& paramNames);
 
 private:
     AcPlayerScriptMgr();
@@ -32,9 +32,11 @@ private:
     void CallRubyHandlers(const char* event, Args... args);
 
     VALUE ConvertToRuby(const void* ptr, const std::string& type);
+    VALUE CreateRubyHash(const std::vector<std::string>& keys, const std::vector<VALUE>& values);
 
     struct EventInfo {
         std::vector<std::string> argTypes;
+        std::vector<std::string> paramNames;
     };
 
     std::map<std::string, std::vector<VALUE>> m_rubyHandlers;

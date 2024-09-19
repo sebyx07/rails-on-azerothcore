@@ -54,9 +54,22 @@ void AcPlayerScriptMgr::UnregisterRubyHandler(const char* event, VALUE handler)
     }
 }
 
-void AcPlayerScriptMgr::RegisterEventInfo(const char* event, const std::vector<std::string>& argTypes)
+void AcPlayerScriptMgr::RegisterEventInfo(const char* event, const std::vector<std::string>& argTypes, const std::vector<std::string>& paramNames)
 {
-    m_eventInfo[event] = EventInfo{argTypes};
+    m_eventInfo[event] = EventInfo{argTypes, paramNames};
+}
+
+VALUE AcPlayerScriptMgr::CreateRubyHash(const std::vector<std::string>& keys, const std::vector<VALUE>& values)
+{
+    if (keys.size() != values.size()) {
+        rb_raise(rb_eArgError, "Mismatch between keys and values count");
+    }
+
+    VALUE hash = rb_hash_new();
+    for (size_t i = 0; i < keys.size(); ++i) {
+        rb_hash_aset(hash, ID2SYM(rb_intern(keys[i].c_str())), values[i]);
+    }
+    return hash;
 }
 
 template<typename... Args>
@@ -72,35 +85,19 @@ void AcPlayerScriptMgr::CallRubyHandlers(const char* event, Args... args)
     }
 
     const auto& argTypes = eventInfoIt->second.argTypes;
+    const auto& paramNames = eventInfoIt->second.paramNames;
     std::vector<const void*> argPtrs = {static_cast<const void*>(&args)...};
 
-    if (argTypes.size() != argPtrs.size())
+    if (argTypes.size() != argPtrs.size() || argTypes.size() != paramNames.size())
     {
-        std::cerr << "Argument count mismatch for event: " << event
-                  << ". Expected: " << argTypes.size()
-                  << ", Got: " << argPtrs.size() << std::endl;
+        std::cerr << "Argument count mismatch for event: " << event << std::endl;
         return;
     }
 
-    std::vector<VALUE> rubyArgs;
+    std::vector<VALUE> rubyValues;
     for (size_t i = 0; i < argTypes.size(); ++i)
     {
-        if (argTypes[i] == "std::string*") {
-            const std::string* str = static_cast<const std::string*>(argPtrs[i]);
-            if (str == nullptr) {
-                std::cout << "String pointer is null" << std::endl;
-            }
-        }
-
-        VALUE arg = Qnil;
-        try {
-            arg = ConvertToRuby(argPtrs[i], argTypes[i]);
-        } catch (const std::exception& e) {
-            std::cerr << "Exception in ConvertToRuby for argument " << i
-                      << " of type " << argTypes[i] << ": " << e.what() << std::endl;
-            return;
-        }
-
+        VALUE arg = ConvertToRuby(argPtrs[i], argTypes[i]);
         if (arg == Qnil && argPtrs[i] != nullptr)
         {
             std::cerr << "Failed to convert argument " << i
@@ -108,8 +105,10 @@ void AcPlayerScriptMgr::CallRubyHandlers(const char* event, Args... args)
                       << " for event: " << event << std::endl;
             return;
         }
-        rubyArgs.push_back(arg);
+        rubyValues.push_back(arg);
     }
+
+    VALUE params = CreateRubyHash(paramNames, rubyValues);
 
     for (VALUE handler : handlerIt->second)
     {
@@ -120,17 +119,10 @@ void AcPlayerScriptMgr::CallRubyHandlers(const char* event, Args... args)
         }
 
         int state;
-        struct RubyCallData {
-            VALUE handler;
-            int argc;
-            VALUE* argv;
-        };
-        RubyCallData call_data = {handler, static_cast<int>(rubyArgs.size()), rubyArgs.data()};
-
         rb_protect([](VALUE data) -> VALUE {
-            RubyCallData* call_data = reinterpret_cast<RubyCallData*>(data);
-            return rb_funcall2(call_data->handler, rb_intern("call"), call_data->argc, call_data->argv);
-        }, reinterpret_cast<VALUE>(&call_data), &state);
+            VALUE* args = reinterpret_cast<VALUE*>(data);
+            return rb_funcall(args[0], rb_intern("call"), 1, args[1]);
+        }, reinterpret_cast<VALUE>((VALUE[2]){handler, params}), &state);
 
         if (state)
         {
@@ -242,11 +234,11 @@ void Init_ac_player_script()
     rb_define_singleton_method(rb_cPlayerScript, "register_handler", RUBY_METHOD_FUNC(rb_ac_player_script_register_handler), 2);
     rb_define_singleton_method(rb_cPlayerScript, "unregister_handler", RUBY_METHOD_FUNC(rb_ac_player_script_unregister_handler), 2);
 
-    // Register event info
-    AcPlayerScriptMgr::instance()->RegisterEventInfo("on_login", {"Player*", "uint32*"});
-    AcPlayerScriptMgr::instance()->RegisterEventInfo("on_chat", {"Player*", "uint32*", "uint32*", "std::string*"});
-    AcPlayerScriptMgr::instance()->RegisterEventInfo("on_logout", {"Player*"});
-    AcPlayerScriptMgr::instance()->RegisterEventInfo("on_level_up", {"Player*", "uint8*"});
+    // Register event info with all parameters
+    AcPlayerScriptMgr::instance()->RegisterEventInfo("on_login", {"Player*", "uint32*"}, {"player", "account_id"});
+    AcPlayerScriptMgr::instance()->RegisterEventInfo("on_logout", {"Player*"}, {"player"});
+    AcPlayerScriptMgr::instance()->RegisterEventInfo("on_chat", {"Player*", "uint32*", "uint32*", "std::string*"}, {"player", "type", "lang", "msg"});
+    AcPlayerScriptMgr::instance()->RegisterEventInfo("on_level_up", {"Player*", "uint8*"}, {"player", "old_level"});
 }
 
 template void AcPlayerScriptMgr::CallRubyHandlers(const char*, Player*); // on_logout

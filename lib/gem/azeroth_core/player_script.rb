@@ -2,6 +2,12 @@
 
 module AzerothCore
   class PlayerScript
+    attr_accessor :params
+
+    def initialize(params={})
+      @params = params
+    end
+
     class << self
       def inherited(subclass)
         subclass.instance_variable_set(:@event_handlers, {})
@@ -19,22 +25,23 @@ module AzerothCore
     module ClassMethods
       def method_added(method_name)
         return unless method_name.to_s.start_with?('on_')
+        return unless public_method_defined?(method_name)
+
         event = method_name.to_s
-        @event_handlers[event] ||= []
+        handler = -> (params) do
+          instance = self.new(params)
 
-        # Create an instance of the class to bind the method to
-        instance = self.new
-        handler = instance.method(method_name)
 
-        @event_handlers[event] << handler
+          instance.send(event)
+        end
+
+        @event_handlers[event] = handler
         AzerothCore::PlayerScriptCPP.register_handler(event, handler)
       end
 
       def unregister_all_handlers
-        @event_handlers.each do |event, handlers|
-          handlers.each do |handler|
-            AzerothCore::PlayerScriptCPP.unregister_handler(event, handler)
-          end
+        @event_handlers.each do |event, handler|
+          AzerothCore::PlayerScriptCPP.unregister_handler(event, handler)
         end
         @event_handlers.clear
       end
