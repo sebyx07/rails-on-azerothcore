@@ -17,6 +17,7 @@ public:
     void OnLogin(Player* player) override;
     void OnLogout(Player* player) override;
     void OnLevelChanged(Player* player, uint8 oldLevel) override;
+    void OnChat(Player* player, uint32 type, uint32 lang, std::string& msg) override;
 
     void RegisterRubyHandler(const char* event, VALUE handler);
     void UnregisterRubyHandler(const char* event, VALUE handler);

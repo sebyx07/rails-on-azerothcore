@@ -45,7 +45,7 @@ void RubyVM::OnShutdown()
     }
 
     LOG_INFO("server.loading", "RubyVM: Unloading RailsOnAzerothCoreApplication");
-    ExecuteRubyScript("config/shutdown.rb");
+    ExecuteRubyScript((rails_path / "config" / "shutdown_environment_wow.rb").string().c_str());
 
     if (watcher)
     {

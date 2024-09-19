@@ -4,9 +4,13 @@ module AzerothCore
   class ReloadCode
     class << self
       def reload!
-        AzerothCore::PlayerScript.unregister_all_handlers
+        stop!
 
         Rails.application.reloader.reload!
+      end
+
+      def stop!
+        AzerothCore::PlayerScript.unregister_all_handlers
       end
     end
   end

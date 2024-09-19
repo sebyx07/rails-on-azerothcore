@@ -149,8 +149,6 @@ static VALUE rb_ac_player_get_account(VALUE self)
 extern "C"
 void Init_ac_player()
 {
-    std::cout << "Initializing AcPlayerWrapper..." << std::endl;
-
     VALUE rb_mAzerothCore = rb_define_module("AzerothCore");
 
     rb_cAcPlayer = rb_define_class_under(rb_mAzerothCore, "Player", rb_cObject);

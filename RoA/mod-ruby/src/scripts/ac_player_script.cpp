@@ -29,6 +29,15 @@ void AcPlayerScriptMgr::OnLogout(Player* player)
     CallRubyHandlers("on_logout", player);
 }
 
+void AcPlayerScriptMgr::OnChat(Player* player, uint32 type, uint32 lang, std::string& msg)
+{
+    std::cout << "OnChat event triggered:" << std::endl;
+    std::cout << "Player: " << player->GetName() << std::endl;
+    std::cout << "Type: " << type << std::endl;
+    std::cout << "Language: " << lang << std::endl;
+    std::cout << "Message: " << msg << std::endl;
+}
+
 void AcPlayerScriptMgr::OnLevelChanged(Player* player, uint8 oldLevel)
 {
     CallRubyHandlers("on_level_up", player, &oldLevel);
@@ -238,8 +247,6 @@ static VALUE rb_ac_player_script_unregister_handler(VALUE self, VALUE event, VAL
 
 void Init_ac_player_script()
 {
-    std::cout << "Initializing AcPlayerScriptMgr..." << std::endl;
-
     VALUE rb_mAzerothCore = rb_define_module("AzerothCore");
     VALUE rb_cPlayerScript = rb_define_class_under(rb_mAzerothCore, "PlayerScriptCPP", rb_cObject);
 

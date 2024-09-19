@@ -94,8 +94,6 @@ static VALUE rb_ac_account_find(VALUE klass, VALUE id)
 extern "C"
 void Init_ac_account()
 {
-    std::cout << "Initializing AcAccountWrapper..." << std::endl;
-
     VALUE rb_mAzerothCore = rb_define_module("AzerothCore");
 
     rb_cAcAccount = rb_define_class_under(rb_mAzerothCore, "Account", rb_cObject);
