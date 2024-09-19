@@ -1,57 +1,34 @@
 #!/bin/bash
 set -e
 
-WATCH_DIR="/azerothcore/modules"
 DOWNLOAD_CLIENT_DATA_SCRIPT="/azerothcore-build/bin/client-data-download"
 COMPILE_SCRIPT="/azerothcore-build/bin/compile-ac"
-COMPILED_FLAG="/azerothcore-build/tmp/.compiled"
-DEBOUNCE_SECONDS=30
-
-# Function to perform compilation and manage the flag file
-compile_and_manage_flag() {
-    echo "Triggering compilation..."
-    if bash $COMPILE_SCRIPT; then
-        echo "Compilation completed successfully. Touching $COMPILED_FLAG"
-        touch "$COMPILED_FLAG"
-    else
-        echo "Compilation failed. $COMPILED_FLAG not created."
-    fi
-}
 
 # Function to clean up and exit
 cleanup_and_exit() {
     echo "Received SIGTERM. Cleaning up and exiting..."
-    kill $inotify_pid 2>/dev/null
     exit 0
 }
 
 # Set up trap for SIGTERM
 trap cleanup_and_exit TERM
 
-# Check if compiled flag exists, if not, trigger initial compilation
-if [ ! -f "$COMPILED_FLAG" ]; then
-    bash $DOWNLOAD_CLIENT_DATA_SCRIPT
-    echo "Compiled flag not found. Triggering initial compilation..."
-    compile_and_manage_flag
+# Download client data
+echo "Downloading client data..."
+bash $DOWNLOAD_CLIENT_DATA_SCRIPT
+
+# Perform compilation
+echo "Starting compilation..."
+if bash $COMPILE_SCRIPT; then
+    echo "Compilation completed successfully."
+else
+    echo "Compilation failed."
+    exit 1
 fi
 
-echo "Watching $WATCH_DIR for changes in src/**/*.cpp and src/**/*.hpp files..."
+echo "Compilation process finished. Sleeping indefinitely..."
 
-last_compile_time=0
-
-# Start inotifywait in the background and save its PID
-inotifywait -m -r -e modify,create,delete,move --format '%w%f' "$WATCH_DIR" |
-while read -r file; do
-    if [[ "$file" =~ ^.*/src/.*\.(cpp|hpp)$ ]]; then
-        current_time=$(date +%s)
-        if (( current_time - last_compile_time >= DEBOUNCE_SECONDS )) || (( last_compile_time == 0 )); then
-            echo "Change detected in $file."
-            compile_and_manage_flag
-            last_compile_time=$current_time
-        fi
-    fi
-done &
-inotify_pid=$!
-
-# Wait for the inotifywait process
-wait $inotify_pid
+# Sleep indefinitely
+while true; do
+    sleep 3600 & wait $!
+done

@@ -31,11 +31,7 @@ void AcPlayerScriptMgr::OnLogout(Player* player)
 
 void AcPlayerScriptMgr::OnChat(Player* player, uint32 type, uint32 lang, std::string& msg)
 {
-    std::cout << "OnChat event triggered:" << std::endl;
-    std::cout << "Player: " << player->GetName() << std::endl;
-    std::cout << "Type: " << type << std::endl;
-    std::cout << "Language: " << lang << std::endl;
-    std::cout << "Message: " << msg << std::endl;
+    CallRubyHandlers("on_chat", player, &type, &lang, msg);
 }
 
 void AcPlayerScriptMgr::OnLevelChanged(Player* player, uint8 oldLevel)
@@ -176,9 +172,13 @@ VALUE AcPlayerScriptMgr::ConvertToRuby(const void* ptr, const std::string& type)
             }
             return Data_Wrap_Struct(rb_cAcPlayer, nullptr, nullptr, player);
         }
-        else if (type == "uint32*")
+        else if (type == "uint32" || type == "uint32*")
         {
-            return UINT2NUM(*static_cast<const uint32*>(ptr));
+            return UINT2NUM(type == "uint32" ? *static_cast<const uint32_t*>(ptr) : **static_cast<const uint32_t* const*>(ptr));
+        }
+        else if (type == "uint8" || type == "uint8*")
+        {
+            return UINT2NUM(type == "uint8" ? *static_cast<const uint8_t*>(ptr) : **static_cast<const uint8_t* const*>(ptr));
         }
         else if (type == "const char*")
         {
@@ -193,15 +193,10 @@ VALUE AcPlayerScriptMgr::ConvertToRuby(const void* ptr, const std::string& type)
         {
             const std::string* str = static_cast<const std::string*>(ptr);
             if (!str) {
-                std::cerr << "ConvertToRuby: Null string pointer" << std::endl;
+                std::cerr << "ConvertToRuby: Null std::string pointer" << std::endl;
                 return Qnil;
             }
-            // Create a new Ruby string with the content, replacing invalid UTF-8 sequences
-            return rb_str_new(str->c_str(), str->length());
-        }
-        else if (type == "uint8*")
-        {
-            return UINT2NUM(*static_cast<const uint8*>(ptr));
+            return rb_str_new_cstr(str->c_str());
         }
     } catch (const std::exception& e) {
         std::cerr << "Exception in ConvertToRuby for type " << type << ": " << e.what() << std::endl;
@@ -214,12 +209,6 @@ VALUE AcPlayerScriptMgr::ConvertToRuby(const void* ptr, const std::string& type)
     std::cerr << "Unknown type for conversion: " << type << std::endl;
     return Qnil;
 }
-
-// Explicit template instantiations
-template void AcPlayerScriptMgr::CallRubyHandlers(const char*, Player*);
-template void AcPlayerScriptMgr::CallRubyHandlers(const char*, Player*, uint32*);
-template void AcPlayerScriptMgr::CallRubyHandlers(const char*, Player*, uint32*, uint32*, std::string*);
-template void AcPlayerScriptMgr::CallRubyHandlers(const char*, Player*, uint8*);
 
 static VALUE rb_ac_player_script_register_handler(VALUE self, VALUE event, VALUE handler)
 {
@@ -255,6 +244,12 @@ void Init_ac_player_script()
 
     // Register event info
     AcPlayerScriptMgr::instance()->RegisterEventInfo("on_login", {"Player*", "uint32*"});
+    AcPlayerScriptMgr::instance()->RegisterEventInfo("on_chat", {"Player*", "uint32*", "uint32*", "std::string*"});
     AcPlayerScriptMgr::instance()->RegisterEventInfo("on_logout", {"Player*"});
     AcPlayerScriptMgr::instance()->RegisterEventInfo("on_level_up", {"Player*", "uint8*"});
 }
+
+template void AcPlayerScriptMgr::CallRubyHandlers(const char*, Player*); // on_logout
+template void AcPlayerScriptMgr::CallRubyHandlers(const char*, Player*, uint32*); // on_login
+template void AcPlayerScriptMgr::CallRubyHandlers(const char*, Player*, uint32*, uint32*, std::string*); // on_chat
+template void AcPlayerScriptMgr::CallRubyHandlers(const char*, Player*, uint8*); // on_level_up

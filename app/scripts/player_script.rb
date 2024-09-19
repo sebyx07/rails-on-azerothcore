@@ -22,4 +22,8 @@ class PlayerScript < AzerothCore::PlayerScript
   def on_logout(player)
     puts "#{player.name} has logged out!"
   end
+
+  def on_chat(*args)
+    puts "Chat event update: #{args}"
+  end
 end

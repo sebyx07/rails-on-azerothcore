@@ -21,23 +21,29 @@ start_worldserver() {
 
 stop_worldserver() {
     if [ ! -z "$WORLDSERVER_PID" ]; then
-        echo "Gracefully stopping worldserver (PID: $WORLDSERVER_PID)..."
-        kill -SIGTERM $WORLDSERVER_PID
+        if kill -0 $WORLDSERVER_PID 2>/dev/null; then
+            echo "Gracefully stopping worldserver (PID: $WORLDSERVER_PID)..."
+            kill -SIGTERM $WORLDSERVER_PID
 
-        # Wait for the process to terminate, with a timeout
-        timeout=60
-        while kill -0 $WORLDSERVER_PID 2>/dev/null; do
-            if [ $timeout -le 0 ]; then
-                echo "Timeout reached. Forcing shutdown..."
-                kill -SIGKILL $WORLDSERVER_PID
-                break
-            fi
-            sleep 1
-            ((timeout--))
-        done
+            # Wait for the process to terminate, with a timeout
+            timeout=60
+            while kill -0 $WORLDSERVER_PID 2>/dev/null; do
+                if [ $timeout -le 0 ]; then
+                    echo "Timeout reached. Forcing shutdown..."
+                    kill -SIGKILL $WORLDSERVER_PID
+                    break
+                fi
+                sleep 1
+                ((timeout--))
+            done
 
-        wait $WORLDSERVER_PID 2>/dev/null || true
-        echo "Worldserver stopped."
+            wait $WORLDSERVER_PID 2>/dev/null || true
+            echo "Worldserver stopped."
+        else
+            echo "Worldserver (PID: $WORLDSERVER_PID) is not running."
+        fi
+    else
+        echo "No worldserver PID found."
     fi
 }
 
