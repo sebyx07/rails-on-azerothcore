@@ -9,6 +9,8 @@ class PlayerScript < AzerothCore::PlayerScript
 
     puts "#{current_player.name} - #{account_id}! has logged in!"
     current_player.send_message('Welcome to the server!')
+
+    puts "items: #{current_character.items.map(&:name)}"
     current_player.level = 33
   end
 
@@ -21,12 +23,16 @@ class PlayerScript < AzerothCore::PlayerScript
     # puts "account: #{current_player.account.inspect}"
     # puts "character: #{current_player.character.inspect}"
     puts "#{current_player.name} says now: #{params[:msg]}"
-    puts "class: #{current_player.character.attributes}"
-    puts "level: #{current_player.character.level}"
+    puts "class: #{current_character.attributes}"
+    puts "level: #{current_character.level}"
   end
 
   private
     def current_player
       @current_player ||= params[:player]
+    end
+
+    def current_character
+      @current_character ||= current_player.character
     end
 end

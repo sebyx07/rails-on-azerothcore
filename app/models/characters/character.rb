@@ -97,5 +97,14 @@ module Characters
     self.primary_key = 'guid'
 
     self.ignored_columns = %w[class]
+
+    has_many :inventory_items, class_name: 'Characters::CharacterInventory', foreign_key: :guid, primary_key: :guid
+    has_many :instance_items, class_name: 'Characters::ItemInstance', foreign_key: :owner_guid, primary_key: :guid
+
+    belongs_to :c_account, class_name: 'Auth::Account', foreign_key: :account
+
+    def items
+      instance_items.map(&:item)
+    end
   end
 end

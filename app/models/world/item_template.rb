@@ -153,5 +153,7 @@ module World
   class ItemTemplate < WorldApplicationRecord
     self.table_name = 'item_template'
     self.primary_key = :entry
+
+    self.ignored_columns = %w[class]
   end
 end

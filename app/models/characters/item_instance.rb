@@ -26,5 +26,7 @@
 module Characters
   class ItemInstance < CharactersApplicationRecord
     self.table_name = 'item_instance'
+
+    belongs_to :item, class_name: 'World::ItemTemplate', foreign_key: :itemEntry
   end
 end

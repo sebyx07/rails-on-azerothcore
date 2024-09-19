@@ -18,5 +18,9 @@ module Characters
   class CharacterInventory < CharactersApplicationRecord
     self.table_name = 'character_inventory'
     self.primary_key = :item
+
+    belongs_to :character, class_name: 'Characters::Character', foreign_key: :guid
+    belongs_to :item_instance, class_name: 'Characters::ItemInstance', foreign_key: :item
+    has_one :item, through: :item_instance
   end
 end

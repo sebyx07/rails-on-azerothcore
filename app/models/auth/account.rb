@@ -43,6 +43,8 @@ module Auth
     validates :salt, presence: true
     validates :verifier, presence: true
 
+    has_many :characters, class_name: 'Characters::Character', foreign_key: 'account'
+
     def password=(value)
       self.salt, self.verifier = Auth::Srp6.make_registration_data(username, value)
     end
