@@ -44,12 +44,6 @@ uint32 AcPlayerWrapper::GetAccountId() const
     return m_player->GetSession()->GetAccountId();
 }
 
-std::shared_ptr<AcAccountWrapper> AcPlayerWrapper::GetAccount() const
-{
-    uint32 accountId = GetAccountId();
-    return std::make_shared<AcAccountWrapper>(accountId);
-}
-
 static VALUE rb_ac_player_alloc(VALUE klass)
 {
     AcPlayerWrapper* wrapper = new AcPlayerWrapper(nullptr);
@@ -130,22 +124,6 @@ static VALUE rb_ac_player_get_account_id(VALUE self)
     return UINT2NUM(wrapper->GetAccountId());
 }
 
-static VALUE rb_ac_player_get_account(VALUE self)
-{
-    AcPlayerWrapper* wrapper;
-    Data_Get_Struct(self, AcPlayerWrapper, wrapper);
-
-    std::shared_ptr<AcAccountWrapper>* accountWrapper = new std::shared_ptr<AcAccountWrapper>(wrapper->GetAccount());
-
-    VALUE account = Data_Wrap_Struct(rb_cAcAccount, nullptr, [](void* ptr) {
-        delete static_cast<std::shared_ptr<AcAccountWrapper>*>(ptr);
-    }, accountWrapper);
-
-    rb_iv_set(account, "@player", self); // Keep a reference to the player to prevent GC
-
-    return account;
-}
-
 extern "C"
 void Init_ac_player()
 {
@@ -160,5 +138,4 @@ void Init_ac_player()
     rb_define_method(rb_cAcPlayer, "send_message", reinterpret_cast<VALUE(*)(...)>(rb_ac_player_send_message), -1);
     rb_define_method(rb_cAcPlayer, "increase_level!", reinterpret_cast<VALUE(*)(...)>(rb_ac_player_increase_level), -1);
     rb_define_method(rb_cAcPlayer, "account_id", reinterpret_cast<VALUE(*)(...)>(rb_ac_player_get_account_id), 0);
-    rb_define_method(rb_cAcPlayer, "account", reinterpret_cast<VALUE(*)(...)>(rb_ac_player_get_account), 0);
 }

@@ -4,7 +4,6 @@
 #include "Define.h"
 #include "Player.h"
 #include "Chat.h"
-#include "ac_account.hpp"
 #include <ruby.h>
 #include <memory>
 
@@ -23,7 +22,6 @@ public:
     void SendMessage(const std::string& message, const std::string& prefix = "System") const;
     AcPlayerWrapper& IncreaseLevel(uint32 amount = 1);
     uint32 GetAccountId() const;
-    std::shared_ptr<AcAccountWrapper> GetAccount() const;
 };
 
 extern VALUE rb_cAcPlayer;

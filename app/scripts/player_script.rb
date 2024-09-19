@@ -16,12 +16,12 @@ class PlayerScript < AzerothCore::PlayerScript
   end
 
   def on_chat
+    puts current_player.account.inspect
     puts "#{current_player.name} says now: #{params[:msg]}"
   end
 
   private
-
-  def current_player
-    @current_player ||= params[:player]
-  end
+    def current_player
+      @current_player ||= params[:player]
+    end
 end

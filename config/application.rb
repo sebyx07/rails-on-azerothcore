@@ -37,7 +37,13 @@ module Roa
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("lib", "gem")
-    config.autoload_paths << Rails.root.join('lib', 'gem')
+
+    config.to_prepare do
+      Dir.glob("#{Rails.root}/lib/gem/**/*.rb").sort.each do |acore_file|
+        require_dependency acore_file
+      end
+    end
+
     config.eager_load_paths << Rails.root.join('app', 'scripts')
 
     # Don't generate system test files.
