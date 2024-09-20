@@ -1,8 +1,12 @@
+# frozen_string_literal: true
+
 module Items
   class MySword < ApplicationItem
-    # self.item_id = 1
-    # self.name = 'My Sword'
-    # self.description = 'This is my sword'
-    # self.quality = :rare
+    def self.build
+      World::ItemTemplate.find_by!(entry: 32837, name: 'Warglaive of Azzinoth').tap do |sword|
+        sword.entry = BASE_ITEM_ID + 1
+        sword.name = 'My MySword'
+      end
+    end
   end
 end

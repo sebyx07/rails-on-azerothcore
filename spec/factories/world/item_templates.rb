@@ -149,153 +149,104 @@
 #  idx_name     (name)
 #  items_index  (class)
 #
-module World
-  class ItemTemplate < WorldApplicationRecord
-    include FixDangerousColumnsConcern
-
-    self.table_name = 'item_template'
-    self.primary_key = :entry
-
-    # generated stuff
-
-    alias_attribute :c_class, :class
-
-    alias_attribute :allowable_class, :AllowableClass
-    alias_attribute :allowable_race, :AllowableRace
-    alias_attribute :armor_damage_modifier, :ArmorDamageModifier
-    alias_attribute :bag_family, :BagFamily
-    alias_attribute :buy_count, :BuyCount
-    alias_attribute :buy_price, :BuyPrice
-    alias_attribute :container_slots, :ContainerSlots
-    alias_attribute :disenchant_id, :DisenchantID
-    alias_attribute :flags, :Flags
-    alias_attribute :flags_custom, :flagsCustom
-    alias_attribute :flags_extra, :FlagsExtra
-    alias_attribute :food_type, :FoodType
-    alias_attribute :gem_properties, :GemProperties
-    alias_attribute :holiday_id, :HolidayId
-    alias_attribute :inventory_type, :InventoryType
-    alias_attribute :item_level, :ItemLevel
-    alias_attribute :item_limit_category, :ItemLimitCategory
-    alias_attribute :language_id, :LanguageID
-    alias_attribute :map, :Map
-    alias_attribute :material, :Material
-    alias_attribute :min_money_loot, :minMoneyLoot
-    alias_attribute :max_money_loot, :maxMoneyLoot
-    alias_attribute :max_durability, :MaxDurability
-    alias_attribute :page_material, :PageMaterial
-    alias_attribute :page_text, :PageText
-    alias_attribute :random_property, :RandomProperty
-    alias_attribute :random_suffix, :RandomSuffix
-    alias_attribute :ranged_mod_range, :RangedModRange
-    alias_attribute :required_city_rank, :RequiredCityRank
-    alias_attribute :required_disenchant_skill, :RequiredDisenchantSkill
-    alias_attribute :required_level, :RequiredLevel
-    alias_attribute :required_reputation_faction, :RequiredReputationFaction
-    alias_attribute :required_reputation_rank, :RequiredReputationRank
-    alias_attribute :required_skill, :RequiredSkill
-    alias_attribute :required_skill_rank, :RequiredSkillRank
-    alias_attribute :socket_bonus, :socketBonus
-    alias_attribute :scaling_stat_distribution, :ScalingStatDistribution
-    alias_attribute :scaling_stat_value, :ScalingStatValue
-    alias_attribute :script_name, :ScriptName
-    alias_attribute :sell_price, :SellPrice
-    alias_attribute :sound_override_subclass, :SoundOverrideSubclass
-    alias_attribute :stats_count, :StatsCount
-    alias_attribute :totem_category, :TotemCategory
-    alias_attribute :verified_build, :VerifiedBuild
-
-    alias_attribute :display_id, :displayid
-    alias_attribute :max_count, :maxcount
-    alias_attribute :required_honor_rank, :requiredhonorrank
-    alias_attribute :required_spell, :requiredspell
-    alias_attribute :start_quest, :startquest
-    alias_attribute :quality, :Quality
-
-    (1..5).each do |i|
-      alias_attribute "spell_id_#{i}", "spellid_#{i}"
-      alias_attribute "spell_trigger_#{i}", "spelltrigger_#{i}"
-      alias_attribute "spell_charges_#{i}", "spellcharges_#{i}"
-      alias_attribute "spell_cooldown_#{i}", "spellcooldown_#{i}"
-      alias_attribute "spell_category_#{i}", "spellcategory_#{i}"
-      alias_attribute "spell_category_cooldown_#{i}", "spellcategorycooldown_#{i}"
-      alias_attribute "spell_ppm_rate_#{i}", "spellppmRate_#{i}"
-    end
-
-    (1..10).each do |i|
-      alias_attribute "stat_type_#{i}", "stat_type#{i}"
-      alias_attribute "stat_value_#{i}", "stat_value#{i}"
-    end
-
-    (1..3).each do |i|
-      alias_attribute "socket_color_#{i}", "socketColor_#{i}"
-      alias_attribute "socket_content_#{i}", "socketContent_#{i}"
-    end
-
-    (1..2).each do |i|
-      alias_attribute "dmg_min_#{i}", "dmg_min#{i}"
-      alias_attribute "dmg_max_#{i}", "dmg_max#{i}"
-      alias_attribute "dmg_type_#{i}", "dmg_type#{i}"
-    end
-
-    validates :entry, presence: true, uniqueness: true
-    validates :name, presence: true, length: { maximum: 255 }
-    validates :description, length: { maximum: 255 }
-    validates :ScriptName, length: { maximum: 64 }
-
-    validates :AllowableClass, :AllowableRace, :RequiredDisenchantSkill,
-              numericality: { only_integer: true, greater_than_or_equal_to: -1 }
-
-    validates :BuyCount, :ContainerSlots, :DisenchantID, :Flags, :FlagsExtra, :FoodType,
-              :HolidayId, :InventoryType, :ItemLevel, :MaxDurability, :PageMaterial,
-              :PageText, :Quality, :RandomSuffix, :RequiredCityRank, :RequiredLevel,
-              :RequiredReputationFaction, :RequiredReputationRank, :RequiredSkill,
-              :RequiredSkillRank, :ScalingStatValue, :SellPrice, :StatsCount,
-              :ammo_type, :area, :armor, :block, :bonding, :c_class, :delay, :displayid,
-              :duration, :itemset, :lockid, :maxMoneyLoot, :minMoneyLoot, :requiredhonorrank,
-              :requiredspell, :sheath, :startquest, :subclass,
-              numericality: { only_integer: true, greater_than_or_equal_to: 0 }
-
-    validates :ArmorDamageModifier, :RangedModRange, :dmg_max1, :dmg_max2, :dmg_min1, :dmg_min2,
-              numericality: true
-
-    validates :BuyPrice, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
-
-    validates :stackable, numericality: { only_integer: true, greater_than_or_equal_to: 1 }
-
-    validates :maxcount, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
-
-    (1..5).each do |i|
-      validates "spellid_#{i}", "spellcharges_#{i}",
-                numericality: { only_integer: true, greater_than_or_equal_to: 0 }
-      validates "spelltrigger_#{i}", "spellcategory_#{i}",
-                numericality: { only_integer: true, greater_than_or_equal_to: 0 }
-      validates "spellcooldown_#{i}", "spellcategorycooldown_#{i}",
-                numericality: { only_integer: true, greater_than_or_equal_to: -1 }
-      validates "spellppmRate_#{i}", numericality: true
-    end
-
-    (1..10).each do |i|
-      validates "stat_type#{i}", numericality: { only_integer: true, greater_than_or_equal_to: 0 }
-      validates "stat_value#{i}", numericality: { only_integer: true }
-    end
-
-    # Validations for socket-related fields
-    (1..3).each do |i|
-      validates "socketColor_#{i}", "socketContent_#{i}",
-                numericality: { only_integer: true, greater_than_or_equal_to: 0 }
-    end
-
-    validate :validate_dmg_fields
-
-    private
-      def validate_dmg_fields
-        if dmg_min1 > dmg_max1
-          errors.add(:dmg_min1, 'cannot be greater than dmg_max1')
-        end
-        if dmg_min2 > dmg_max2
-          errors.add(:dmg_min2, 'cannot be greater than dmg_max2')
-        end
-      end
+FactoryBot.define do
+  factory :item_template, class: World::ItemTemplate do
+    sequence(:entry) { |n| 32837 + n }
+    sequence(:name) { |n| "Warglaive of Azzinoth #{n}" }
+    c_class { 2 }
+    subclass { 7 }
+    sound_override_subclass { -1 }
+    display_id { 45479 }
+    quality { 5 }
+    flags { 0 }
+    flags_extra { 0 }
+    buy_count { 1 }
+    buy_price { 1215564 }
+    sell_price { 243112 }
+    inventory_type { 21 }
+    allowable_class { 9 }
+    allowable_race { 32767 }
+    item_level { 156 }
+    required_level { 70 }
+    required_skill { 0 }
+    required_skill_rank { 0 }
+    required_spell { 0 }
+    required_honor_rank { 0 }
+    required_city_rank { 0 }
+    required_reputation_faction { 0 }
+    required_reputation_rank { 0 }
+    max_count { 1 }
+    stackable { 1 }
+    container_slots { 0 }
+    stats_count { 3 }
+    stat_type1 { 3 }
+    stat_value1 { 22 }
+    stat_type2 { 7 }
+    stat_value2 { 29 }
+    stat_type3 { 31 }
+    stat_value3 { 21 }
+    scaling_stat_distribution { 0 }
+    scaling_stat_value { 0 }
+    dmg_min1 { 214.0 }
+    dmg_max1 { 398.0 }
+    dmg_type1 { 0 }
+    dmg_min2 { 0.0 }
+    dmg_max2 { 0.0 }
+    dmg_type2 { 0 }
+    armor { 0 }
+    holy_res { 0 }
+    fire_res { 0 }
+    nature_res { 0 }
+    frost_res { 0 }
+    shadow_res { 0 }
+    arcane_res { 0 }
+    delay { 2800 }
+    ammo_type { 0 }
+    ranged_mod_range { 0.0 }
+    spell_id_1 { 15810 }
+    spell_trigger_1 { 1 }
+    spell_charges_1 { 0 }
+    spell_ppm_rate_1 { 0.0 }
+    spell_cooldown_1 { -1 }
+    spell_category_1 { 0 }
+    spell_category_cooldown_1 { -1 }
+    bonding { 1 }
+    description { '' }
+    page_text { 0 }
+    language_id { 0 }
+    page_material { 0 }
+    start_quest { 0 }
+    lockid { 0 }
+    material { 1 }
+    sheath { 1 }
+    random_property { 0 }
+    random_suffix { 0 }
+    block { 0 }
+    itemset { 699 }
+    max_durability { 125 }
+    area { 0 }
+    map { 0 }
+    bag_family { 0 }
+    totem_category { 0 }
+    socket_color_1 { 0 }
+    socket_content_1 { 0 }
+    socket_color_2 { 0 }
+    socket_content_2 { 0 }
+    socket_color_3 { 0 }
+    socket_content_3 { 0 }
+    socket_bonus { 0 }
+    gem_properties { 0 }
+    required_disenchant_skill { -1 }
+    armor_damage_modifier { 0.0 }
+    duration { 0 }
+    item_limit_category { 0 }
+    holiday_id { 0 }
+    script_name { '' }
+    disenchant_id { 0 }
+    food_type { 0 }
+    min_money_loot { 0 }
+    max_money_loot { 0 }
+    flags_custom { 0 }
+    verified_build { 12340 }
   end
 end

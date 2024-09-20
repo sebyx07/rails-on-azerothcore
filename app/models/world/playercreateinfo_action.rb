@@ -7,7 +7,7 @@
 #  action :integer          default(0), unsigned, not null
 #  button :integer          default(0), unsigned, not null, primary key
 #  class  :integer          default(0), unsigned, not null, primary key
-#  race   :integer          default(0), unsigned, not null, primary key
+#  race   :integer          default(0), unsigned, not null
 #  type   :integer          default(0), unsigned, not null
 #
 # Indexes

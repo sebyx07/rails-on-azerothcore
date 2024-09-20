@@ -4,10 +4,10 @@
 #
 # Table name: playercreateinfo_cast_spell
 #
-#  classMask :integer          default(0), unsigned, not null
+#  classMask :integer          default(0), unsigned, not null, primary key
 #  note      :string(255)
-#  raceMask  :integer          default(0), unsigned, not null
-#  spell     :integer          default(0), unsigned, not null
+#  raceMask  :integer          default(0), unsigned, not null, primary key
+#  spell     :integer          default(0), unsigned, not null, primary key
 #
 module World
   class PlayercreateinfoCastSpell < WorldApplicationRecord

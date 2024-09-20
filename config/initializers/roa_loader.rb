@@ -17,3 +17,10 @@ unless Rails.application.config.eager_load
     Rails.autoloaders.main.eager_load_dir("#{Rails.root}/app/wow")
   end
 end
+
+
+Rails.application.config.after_initialize do
+  AzerothCore::Item.descendants.each do |subclass|
+    # AzerothCore::Item::ImportItem.new(subclass).import
+  end
+end

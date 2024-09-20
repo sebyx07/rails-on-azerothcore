@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 module FixDangerousColumnsConcern
-  include ActiveSupport::Concern
+  extend ActiveSupport::Concern
 
   class_methods do
     def instance_method_already_implemented?(_)

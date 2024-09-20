@@ -29,13 +29,12 @@ module Scripts
     end
 
     private
-    def current_player
-      @current_player ||= params[:player]
-    end
+      def current_player
+        @current_player ||= params[:player]
+      end
 
-    def current_character
-      @current_character ||= current_player.character
-    end
+      def current_character
+        @current_character ||= current_player.character
+      end
   end
-
 end

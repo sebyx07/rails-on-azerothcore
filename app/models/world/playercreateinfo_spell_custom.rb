@@ -5,7 +5,7 @@
 # Table name: playercreateinfo_spell_custom
 #
 #  Note      :string(255)
-#  Spell     :integer          default(0), unsigned, not null, primary key
+#  Spell     :integer          default(0), unsigned, not null
 #  classmask :integer          default(0), unsigned, not null, primary key
 #  racemask  :integer          default(0), unsigned, not null, primary key
 #

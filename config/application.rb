@@ -44,6 +44,7 @@ module Roa
       end
     end
 
+    config.eager_load_paths << Rails.root.join('lib', 'gem')
     config.eager_load_paths << Rails.root.join('app', 'wow')
 
     # Don't generate system test files.
