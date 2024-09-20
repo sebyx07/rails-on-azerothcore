@@ -151,9 +151,11 @@
 #
 module World
   class ItemTemplate < WorldApplicationRecord
+    include FixDangerousColumnsConcern
+
     self.table_name = 'item_template'
     self.primary_key = :entry
 
-    self.ignored_columns = %w[class]
+    alias_attribute :c_class, :class
   end
 end

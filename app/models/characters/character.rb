@@ -93,10 +93,12 @@
 #
 module Characters
   class Character < CharactersApplicationRecord
+    include FixDangerousColumnsConcern
+
     self.table_name = 'characters'
     self.primary_key = 'guid'
 
-    self.ignored_columns = %w[class]
+    alias_attribute :c_class, :class
 
     has_many :inventory_items, class_name: 'Characters::CharacterInventory', foreign_key: :guid, primary_key: :guid
     has_many :instance_items, class_name: 'Characters::ItemInstance', foreign_key: :owner_guid, primary_key: :guid
