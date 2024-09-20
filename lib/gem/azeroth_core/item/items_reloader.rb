@@ -31,7 +31,7 @@ module AzerothCore
         editor = Dbc::CustomItemEditor.new(
           Rails.root.join('dbc/Item.dbc'),
           ENV['ACORE_ROOT_PATH'] + '/env/dist/client-data/dbc/Item.dbc',
-          ENV['WOW_ROOT_PATH'] + '/Data/custom-items.MPQ'
+          ENV['WOW_ROOT_PATH'] + '/Data/enUS/patch-enUS-4.MPQ'
         )
 
         has_new_items = false
@@ -42,7 +42,7 @@ module AzerothCore
           editor.add_record(item.to_dbc)
         end
 
-        editor.save_changes if has_new_items
+        editor.save_changes # if has_new_items
       end
 
       def sub_klasses

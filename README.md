@@ -1,24 +1,97 @@
-# README
+# Rails on Azeroth Core (WIP)
+### Ruby VM and Rails loaded into the AzerothCore and vice versa
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
 
-Things you may want to cover:
+## Examples
 
-* Ruby version
+custom scripts:
+```
+# app/wow/scripts/my_player_script.rb
+# frozen_string_literal: true
 
-* System dependencies
+module Scripts
+  class MyPlayerScript < AzerothCore::PlayerScript
+    # This method is called when a player logs in
+    def on_login
+      account_id = current_player.account_id
 
-* Configuration
+      puts current_player.character_id
 
-* Database creation
+      puts "#{current_player.name} - #{account_id}! has logged in!"
+      current_player.send_message('Welcome to the server!')
 
-* Database initialization
+      puts "items: #{current_character.items.map(&:name)}"
+      current_player.level = 33
+    end
 
-* How to run the test suite
+    # This method is called when a player logs out
+    def on_logout
+      puts "#{current_player.name} has logged out!"
+    end
 
-* Services (job queues, cache servers, search engines, etc.)
+    def on_chat
+      # puts "account: #{current_player.account.inspect}"
+      # puts "character: #{current_player.character.inspect}"
+      puts "#{current_player.name} says now: #{params[:msg]}"
+      puts "class: #{current_character.attributes}"
+      puts "level: #{current_character.level}"
+    end
 
-* Deployment instructions
+    private
+      def current_player
+        @current_player ||= params[:player]
+      end
 
-* ...
+      def current_character
+        @current_character ||= current_player.character
+      end
+  end
+end
+```
+
+custom items:
+```ruby
+# app/wow/items/my_item.rb
+
+module Items
+  class MySword < ApplicationItem
+    def self.build
+      World::ItemTemplate.find_by!(entry: 32837, name: 'Warglaive of Azzinoth').tap do |sword|
+        sword.entry = item_id
+        sword.name = 'My Sword 1'
+      end
+    end
+
+    def self.item_id
+      BASE_ITEM_ID + 1
+    end
+
+    def on_quest_accept
+      puts params[:player].name + ' accepted the quest'
+    end
+  end
+end
+```
+
+Run: 
+```bash
+bin/setup
+bin/dev
+```
+Start wow, set realmlist to 127.0.0.1
+
+```bash
+bin/console
+ > account create admin admin
+ > account set gmlevel admin 3 1
+```
+
+Finish setup
+```bash
+bin/rails db:setup
+```
+
+run specs
+```bash
+bin/rspec
+```
