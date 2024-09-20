@@ -45,4 +45,5 @@ end
 gem 'rice', '~> 4.3', '>= 4.3.1'
 gem 'colorize', '~> 1.1'
 gem 'sidekiq', '~> 7.3', '>= 7.3.2'
-gem 'rb-inotify', '~> 0.11.1'
+gem 'bindata', '~> 2.1'
+gem 'dotenv-rails', '~> 3.1', '>= 3.1.4', require: 'dotenv/load'

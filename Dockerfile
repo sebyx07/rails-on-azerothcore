@@ -107,4 +107,6 @@ ENV LANG="C.UTF-8"
 ENV LANGUAGE="en_US:en"
 ENV SPRING_SOCKET=/rails/tmp/spring.sock
 
+RUN cargo install mpqtool
+
 CMD ["/bin/bash"]

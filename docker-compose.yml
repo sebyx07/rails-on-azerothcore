@@ -23,6 +23,7 @@ services:
       - bundle-cache:/usr/local/bundle
       - ./RoA/build:/azerothcore-build
       - ./ac-wotlk:/azerothcore
+      - ./wow-client:/wow-client
     networks:
       - app-network
     command: rails s -b 0.0.0.0
@@ -74,6 +75,7 @@ services:
       - ./RoA/build:/azerothcore-build
       - ./RoA/mod-ruby:/azerothcore/modules/mod-ruby
       - bundle-cache:/usr/local/bundle
+      - ./wow-client:/wow-client
     command: compiler
 
   world:
@@ -101,6 +103,7 @@ services:
       - ./RoA/build:/azerothcore-build
       - ${DOCKER_VOL_ETC:-./ac-wotlk/env/dist/etc}:/azerothcore/env/dist/etc
       - ${DOCKER_VOL_LOGS:-./ac-wotlk/env/dist/logs}:/azerothcore/env/dist/logs:delegated
+      - ./wow-client:/wow-client
     depends_on:
       db:
         condition: service_healthy

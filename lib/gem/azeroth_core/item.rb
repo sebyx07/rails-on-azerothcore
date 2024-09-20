@@ -2,7 +2,6 @@
 
 module AzerothCore
   class Item
-    BASE_ITEM_ID = 1_000_000
     class << self
       attr_accessor :abstract_class
 
@@ -13,9 +12,8 @@ module AzerothCore
       def reload!
         return if Rails.env.test?
         return unless World::ItemTemplate.table_exists?
-        descendants.each do |subclass|
-          AzerothCore::Item::ImportItem.new(subclass).import
-        end
+
+        ItemsReloader.new.reload
       rescue ActiveRecord::NoDatabaseError
         # Ignore
       end
