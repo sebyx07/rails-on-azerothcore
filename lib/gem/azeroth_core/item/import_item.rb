@@ -8,20 +8,28 @@ module AzerothCore
       end
 
       def import
-        return if Rails.env.test?
-
         return if @klass.abstract_class
 
-        record = @klass.build
-
-        AzerothCore::Log.standard("#{"Item".colorize(:green)} importing (#{record.name.colorize(:purple)})")
-
-        existing_record = @klass.find_by(entry: record.entry)
-        if existing_record.present?
-          existing_record.assign_attributes(record.attributes)
+        begin
+          record = @klass.build
+          entry = record.entry
+          record = record.dup
+          record.entry = entry
+        rescue ActiveRecord::RecordNotFound
+          return
         end
 
-        existing_record.save!
+        AzerothCore::Log.standard(
+          "#{"Item".colorize(:green)} importing (#{record.name.colorize(:red)}) ##{record.entry.to_s.colorize(:blue)}"
+        )
+
+        existing_record = World::ItemTemplate.find_by(entry: record.entry)
+        if existing_record.present?
+          existing_record.assign_attributes(record.attributes)
+          existing_record.save!
+        else
+          record.save!
+        end
       end
     end
   end

@@ -20,7 +20,13 @@ end
 
 
 Rails.application.config.after_initialize do
-  AzerothCore::Item.descendants.each do |subclass|
-    # AzerothCore::Item::ImportItem.new(subclass).import
+  begin
+    next if Rails.env.test?
+    next unless World::ItemTemplate.table_exists?
+    AzerothCore::Item.descendants.each do |subclass|
+      AzerothCore::Item::ImportItem.new(subclass).import
+    end
+  rescue ActiveRecord::NoDatabaseError
+    # Ignore
   end
 end

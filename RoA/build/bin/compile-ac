@@ -7,6 +7,11 @@ BUILD_SCRIPT_DIR="/azerothcore-build"
 SRCDIR="/azerothcore"
 BUILDDIR="/azerothcore/build"
 CUSTOM_CMAKELIST="/azerothcore-build/config/CMakeLists.txt"
+DOWNLOAD_CLIENT_DATA_SCRIPT="/azerothcore-build/bin/client-data-download"
+
+# Download client data
+echo "Downloading client data..."
+bash $DOWNLOAD_CLIENT_DATA_SCRIPT
 
 # Ruby configuration
 export RUBY_VERSION=$(ruby -e 'puts RUBY_VERSION')

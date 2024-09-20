@@ -14,7 +14,10 @@ services:
       - redis_url=redis://redis:6379
       - LD_PRELOAD=/azerothcore/build/src/server/shared/libshared.so
     depends_on:
-      - spring
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     volumes:
       - .:/rails
       - bundle-cache:/usr/local/bundle
@@ -161,32 +164,6 @@ services:
       compiler:
         condition: service_started
     command: authserver
-
-  spring:
-    container_name: roa_spring_rails
-    working_dir: /rails
-    build:
-      context: .
-      args:
-        USER_ID: ${DOCKER_USER_ID:-1000}
-        GROUP_ID: ${DOCKER_GROUP_ID:-1000}
-        DOCKER_USER: ${DOCKER_USER:-acore}
-    environment:
-      - redis_url=redis://redis:6379
-      - LD_PRELOAD=/azerothcore/build/src/server/shared/libshared.so
-    depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    volumes:
-      - .:/rails
-      - bundle-cache:/usr/local/bundle
-      - ./RoA/build:/azerothcore-build
-      - ./ac-wotlk:/azerothcore
-    networks:
-      - app-network
-    command: spring server
 
 volumes:
   mysql_data:
