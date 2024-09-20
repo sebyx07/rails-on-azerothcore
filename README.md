@@ -5,7 +5,7 @@
 ## Examples
 
 custom scripts:
-```
+```ruby
 # app/wow/scripts/my_player_script.rb
 # frozen_string_literal: true
 
