@@ -27,11 +27,10 @@ module AzerothCore
       end
 
       def import_to_dbc
-        puts "Importing items to DBC/MPQ..."
         editor = Dbc::CustomItemEditor.new(
           Rails.root.join('dbc/Item.dbc'),
           ENV['ACORE_ROOT_PATH'] + '/env/dist/client-data/dbc/Item.dbc',
-          ENV['WOW_ROOT_PATH'] + '/Data/enUS/patch-enUS-4.MPQ'
+          ENV['WOW_ROOT_PATH'] + '/Data/patch-4.MPQ'
         )
 
         has_new_items = false

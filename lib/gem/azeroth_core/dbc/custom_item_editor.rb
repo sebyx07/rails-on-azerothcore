@@ -59,6 +59,7 @@ module AzerothCore
       end
 
       def save_changes
+        puts "Writing Items.dbc to #{@output_dbc_path}"
         File.open(@output_dbc_path, 'wb') do |file|
           write_header(file)
           write_records(file)
@@ -83,6 +84,8 @@ module AzerothCore
         end
 
         def create_mpq
+          FileUtils.rm_rf(@output_mpq_path)
+          puts "Saving MPQ to #{@output_mpq_path}"
           builder = AzerothCore::Mpq::Builder.new(@output_mpq_path)
           builder.add_file(@output_dbc_path, 'DBFilesClient/Item.dbc')
           builder.build
