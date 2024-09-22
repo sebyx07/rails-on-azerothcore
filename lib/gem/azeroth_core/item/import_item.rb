@@ -47,7 +47,6 @@ module AzerothCore
           raise DbcItemNotFound, "Item ##{@klass.inherit_from} not found in DBC" unless item
         end.tap do |item|
           item[:id] = @record.entry
-          binding.pry
         end
       end
     end

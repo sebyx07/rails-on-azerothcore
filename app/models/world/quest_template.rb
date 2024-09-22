@@ -114,5 +114,121 @@ module World
   class QuestTemplate < WorldApplicationRecord
     self.table_name = 'quest_template'
     self.primary_key = 'ID'
+
+    alias_attribute :id, :ID
+    alias_attribute :allowable_races, :AllowableRaces
+    alias_attribute :area_description, :AreaDescription
+    alias_attribute :flags, :Flags
+    alias_attribute :item_drop_1, :ItemDrop1
+    alias_attribute :item_drop_2, :ItemDrop2
+    alias_attribute :item_drop_3, :ItemDrop3
+    alias_attribute :item_drop_4, :ItemDrop4
+    alias_attribute :item_drop_quantity_1, :ItemDropQuantity1
+    alias_attribute :item_drop_quantity_2, :ItemDropQuantity2
+    alias_attribute :item_drop_quantity_3, :ItemDropQuantity3
+    alias_attribute :item_drop_quantity_4, :ItemDropQuantity4
+    alias_attribute :log_description, :LogDescription
+    alias_attribute :log_title, :LogTitle
+    alias_attribute :min_level, :MinLevel
+    alias_attribute :objective_text_1, :ObjectiveText1
+    alias_attribute :objective_text_2, :ObjectiveText2
+    alias_attribute :objective_text_3, :ObjectiveText3
+    alias_attribute :objective_text_4, :ObjectiveText4
+    alias_attribute :poi_continent, :POIContinent
+    alias_attribute :poi_priority, :POIPriority
+    alias_attribute :poi_x, :POIx
+    alias_attribute :poi_y, :POIy
+    alias_attribute :quest_completion_log, :QuestCompletionLog
+    alias_attribute :quest_description, :QuestDescription
+    alias_attribute :quest_info_id, :QuestInfoID
+    alias_attribute :quest_level, :QuestLevel
+    alias_attribute :quest_sort_id, :QuestSortID
+    alias_attribute :quest_type, :QuestType
+    alias_attribute :required_faction_id_1, :RequiredFactionId1
+    alias_attribute :required_faction_id_2, :RequiredFactionId2
+    alias_attribute :required_faction_value_1, :RequiredFactionValue1
+    alias_attribute :required_faction_value_2, :RequiredFactionValue2
+    alias_attribute :required_item_count_1, :RequiredItemCount1
+    alias_attribute :required_item_count_2, :RequiredItemCount2
+    alias_attribute :required_item_count_3, :RequiredItemCount3
+    alias_attribute :required_item_count_4, :RequiredItemCount4
+    alias_attribute :required_item_count_5, :RequiredItemCount5
+    alias_attribute :required_item_count_6, :RequiredItemCount6
+    alias_attribute :required_item_id_1, :RequiredItemId1
+    alias_attribute :required_item_id_2, :RequiredItemId2
+    alias_attribute :required_item_id_3, :RequiredItemId3
+    alias_attribute :required_item_id_4, :RequiredItemId4
+    alias_attribute :required_item_id_5, :RequiredItemId5
+    alias_attribute :required_item_id_6, :RequiredItemId6
+    alias_attribute :required_npc_or_go_1, :RequiredNpcOrGo1
+    alias_attribute :required_npc_or_go_2, :RequiredNpcOrGo2
+    alias_attribute :required_npc_or_go_3, :RequiredNpcOrGo3
+    alias_attribute :required_npc_or_go_4, :RequiredNpcOrGo4
+    alias_attribute :required_npc_or_go_count_1, :RequiredNpcOrGoCount1
+    alias_attribute :required_npc_or_go_count_2, :RequiredNpcOrGoCount2
+    alias_attribute :required_npc_or_go_count_3, :RequiredNpcOrGoCount3
+    alias_attribute :required_npc_or_go_count_4, :RequiredNpcOrGoCount4
+    alias_attribute :required_player_kills, :RequiredPlayerKills
+    alias_attribute :reward_amount_1, :RewardAmount1
+    alias_attribute :reward_amount_2, :RewardAmount2
+    alias_attribute :reward_amount_3, :RewardAmount3
+    alias_attribute :reward_amount_4, :RewardAmount4
+    alias_attribute :reward_arena_points, :RewardArenaPoints
+    alias_attribute :reward_choice_item_id_1, :RewardChoiceItemID1
+    alias_attribute :reward_choice_item_id_2, :RewardChoiceItemID2
+    alias_attribute :reward_choice_item_id_3, :RewardChoiceItemID3
+    alias_attribute :reward_choice_item_id_4, :RewardChoiceItemID4
+    alias_attribute :reward_choice_item_id_5, :RewardChoiceItemID5
+    alias_attribute :reward_choice_item_id_6, :RewardChoiceItemID6
+    alias_attribute :reward_choice_item_quantity_1, :RewardChoiceItemQuantity1
+    alias_attribute :reward_choice_item_quantity_2, :RewardChoiceItemQuantity2
+    alias_attribute :reward_choice_item_quantity_3, :RewardChoiceItemQuantity3
+    alias_attribute :reward_choice_item_quantity_4, :RewardChoiceItemQuantity4
+    alias_attribute :reward_choice_item_quantity_5, :RewardChoiceItemQuantity5
+    alias_attribute :reward_choice_item_quantity_6, :RewardChoiceItemQuantity6
+    alias_attribute :reward_display_spell, :RewardDisplaySpell
+    alias_attribute :reward_faction_id_1, :RewardFactionID1
+    alias_attribute :reward_faction_id_2, :RewardFactionID2
+    alias_attribute :reward_faction_id_3, :RewardFactionID3
+    alias_attribute :reward_faction_id_4, :RewardFactionID4
+    alias_attribute :reward_faction_id_5, :RewardFactionID5
+    alias_attribute :reward_faction_override_1, :RewardFactionOverride1
+    alias_attribute :reward_faction_override_2, :RewardFactionOverride2
+    alias_attribute :reward_faction_override_3, :RewardFactionOverride3
+    alias_attribute :reward_faction_override_4, :RewardFactionOverride4
+    alias_attribute :reward_faction_override_5, :RewardFactionOverride5
+    alias_attribute :reward_faction_value_1, :RewardFactionValue1
+    alias_attribute :reward_faction_value_2, :RewardFactionValue2
+    alias_attribute :reward_faction_value_3, :RewardFactionValue3
+    alias_attribute :reward_faction_value_4, :RewardFactionValue4
+    alias_attribute :reward_faction_value_5, :RewardFactionValue5
+    alias_attribute :reward_honor, :RewardHonor
+    alias_attribute :reward_item_1, :RewardItem1
+    alias_attribute :reward_item_2, :RewardItem2
+    alias_attribute :reward_item_3, :RewardItem3
+    alias_attribute :reward_item_4, :RewardItem4
+    alias_attribute :reward_kill_honor, :RewardKillHonor
+    alias_attribute :reward_money, :RewardMoney
+    alias_attribute :reward_money_difficulty, :RewardMoneyDifficulty
+    alias_attribute :reward_next_quest, :RewardNextQuest
+    alias_attribute :reward_spell, :RewardSpell
+    alias_attribute :reward_talents, :RewardTalents
+    alias_attribute :reward_title, :RewardTitle
+    alias_attribute :reward_xp_difficulty, :RewardXPDifficulty
+    alias_attribute :start_item, :StartItem
+    alias_attribute :suggested_group_num, :SuggestedGroupNum
+    alias_attribute :time_allowed, :TimeAllowed
+    alias_attribute :unknown_0, :Unknown0
+    alias_attribute :verified_build, :VerifiedBuild
+
+    validates :ID, presence: true, uniqueness: true
+    validates :QuestLevel, presence: true, numericality: { greater_than_or_equal_to: 1 }
+    validates :MinLevel, :QuestType, :QuestSortID, :QuestInfoID, :SuggestedGroupNum,
+              :TimeAllowed, :AllowableRaces, :Flags, :SpecialFlags,
+              numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+    validates :RewardHonor, :RewardKillHonor, numericality: true
+    validates :RewardMoney, :RewardBonusMoney, numericality: { only_integer: true }
+    validates :RewardDisplaySpell, :RewardSpell, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+    validates :POIx, :POIy, numericality: true
   end
 end
