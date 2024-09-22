@@ -3,6 +3,7 @@
 module AzerothCore
   class Item
     class ImportItem
+      class DbcItemNotFound < StandardError; end
       attr_reader :record
       def initialize(klass)
         @klass = klass
@@ -33,21 +34,21 @@ module AzerothCore
         entry
       end
 
-      def to_dbc
-        {
-          id: @record.entry,
-          display_id: @record.display_id,
-          class_id: @record.c_class,
-          subclass_id: @record.subclass,
-          sound_override_subclass_id: @record.sound_override_subclass,
-          material: @record.material,
-          inventory_type: @record.inventory_type,
-          sheathe_type: @record.sheath,
-        }
-      end
-
       def new_record?
         @new_record
+      end
+
+      def to_dbc(custom_item_editor)
+        if @klass.respond_to?(:to_dbc)
+          return @klass.to_dbc(custom_item_editor)
+        end
+
+        custom_item_editor.items_manager.find_by(:id, @klass.inherit_from).first.tap do |item|
+          raise DbcItemNotFound, "Item ##{@klass.inherit_from} not found in DBC" unless item
+        end.tap do |item|
+          item[:id] = @record.entry
+          binding.pry
+        end
       end
     end
   end

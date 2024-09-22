@@ -29,7 +29,7 @@ module AzerothCore
           editor = Dbc::CustomItemEditor.new(
             input_dbc_path: Rails.root.join('dbc'),
             output_dbc_path: ENV['ACORE_ROOT_PATH'] + '/env/dist/client-data/dbc',
-            output_mpq_path: ENV['WOW_ROOT_PATH'] + '/Data/patch-4.MPQ'
+            output_mpq_path: ENV['WOW_ROOT_PATH'] + '/Data/Patch-4.MPQ'
           )
 
           has_new_items = false
@@ -37,7 +37,8 @@ module AzerothCore
             if item.new_record?
               has_new_items = true
             end
-            editor.add_record(item.to_dbc)
+            dbc_item = item.to_dbc(editor)
+            editor.add_record(dbc_item)
           end
 
           editor.save_changes # if has_new_items

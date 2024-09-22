@@ -5,17 +5,17 @@ module AzerothCore
     class CustomItemEditor
       class DbcItemsManager < WowDBC::DBCFile
         def initialize(file_path)
-          field_names = [
-            :id,               # itemID
-            :display_id,          # FileDataID (icons path)
-            :class_id,              # ItemClass
-            :subclass_id,           # ItemSubClass
-            :sound_override_subclass_id, # sound_override_subclassid
-            :material,           # MaterialID
-            :inventory_type,     # InventorySlotID
-            :sheathe_type,             # SheathID
-            :group_sounds_id        # GroupSoundsID (moved from ItemDisplayInfo)
-          ]
+          field_names = {
+            id: :uint32,
+            class: :uint32,
+            subclass: :uint32,
+            sound_override_subclass: :int32,
+            material: :uint32,
+            display_id: :uint32,
+            inventory_type: :uint32,
+            sheath_type: :uint32
+          }
+
           super(file_path, field_names)
           read
         end

@@ -13,6 +13,10 @@ module AzerothCore
         raise NotImplementedError
       end
 
+      def inherit_from
+        raise NotImplementedError
+      end
+
       def record
         World::ItemTemplate.find_by!(entry: item_id)
       end
