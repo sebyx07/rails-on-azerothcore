@@ -73,7 +73,7 @@ module Items
 end
 ```
 
-Run: 
+Run:
 ```bash
 bin/setup
 bin/dev

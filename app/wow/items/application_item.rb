@@ -2,7 +2,7 @@
 
 module Items
   class ApplicationItem < AzerothCore::Item
-    BASE_ITEM_ID = 1_000_000
+    BASE_ITEM_ID = 200_000
     self.abstract_class = true
   end
 end

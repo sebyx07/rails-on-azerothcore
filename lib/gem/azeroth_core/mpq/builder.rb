@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module AzerothCore
   module Mpq
     class Builder
@@ -8,8 +10,8 @@ module AzerothCore
 
       def add_file(source_path, archive_path)
         @files << {
-          source_path: source_path,
-          archive_path: archive_path
+          source_path:,
+          archive_path:
         }
       end
 
@@ -23,11 +25,10 @@ module AzerothCore
       end
 
       private
-
-      def system(*args)
-        puts "Executing: #{args.join(' ')}"
-        Kernel.system(*args)
-      end
+        def system(*args)
+          puts "Executing: #{args.join(' ')}"
+          Kernel.system(*args)
+        end
     end
   end
 end

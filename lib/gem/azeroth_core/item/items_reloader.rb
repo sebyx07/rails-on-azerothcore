@@ -13,46 +13,46 @@ module AzerothCore
       end
 
       private
+        def import_to_db
+          puts 'Importing items to database...'
+          import_items.each do |item|
+            entry = item.import
+            next unless entry
 
-      def import_to_db
-        puts "Importing items to database..."
-        import_items.each do |item|
-          entry = item.import
-          next unless entry
-
-          @saved_entries << entry
-        end
-
-        World::ItemTemplate.where("entry > ?", Items::ApplicationItem::BASE_ITEM_ID).where.not(entry: @saved_entries).delete_all
-      end
-
-      def import_to_dbc
-        editor = Dbc::CustomItemEditor.new(
-          Rails.root.join('dbc/Item.dbc'),
-          ENV['ACORE_ROOT_PATH'] + '/env/dist/client-data/dbc/Item.dbc',
-          ENV['WOW_ROOT_PATH'] + '/Data/patch-4.MPQ'
-        )
-
-        has_new_items = false
-        import_items.each do |item|
-          if item.new_record?
-            has_new_items = true
+            @saved_entries << entry
           end
-          editor.add_record(item.to_dbc)
+
+          World::ItemTemplate.where('entry > ?', Items::ApplicationItem::BASE_ITEM_ID).where.not(entry: @saved_entries).delete_all
         end
 
-        editor.save_changes # if has_new_items
-      end
+        def import_to_dbc
+          editor = Dbc::CustomItemEditor.new(
+            input_dbc_path: Rails.root.join('dbc'),
+            output_dbc_path: ENV['ACORE_ROOT_PATH'] + '/env/dist/client-data/dbc',
+            output_mpq_path: ENV['WOW_ROOT_PATH'] + '/Data/patch-4.MPQ'
+          )
 
-      def sub_klasses
-        @sub_klasses ||= AzerothCore::Item.descendants
-      end
+          has_new_items = false
+          import_items.each do |item|
+            if item.new_record?
+              has_new_items = true
+            end
+            editor.add_record(item.to_dbc)
+          end
 
-      def import_items
-        @import_items ||= AzerothCore::Item.descendants.map do |subclass|
-          ImportItem.new(subclass)
+          editor.save_changes # if has_new_items
         end
-      end
+
+        def sub_klasses
+          @sub_klasses ||= AzerothCore::Item.descendants
+        end
+
+        def import_items
+          @import_items ||= AzerothCore::Item.descendants.filter_map do |subclass|
+            next if subclass.abstract_class
+            ImportItem.new(subclass)
+          end
+        end
     end
   end
 end

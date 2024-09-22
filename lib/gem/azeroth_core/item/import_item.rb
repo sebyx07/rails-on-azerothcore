@@ -3,22 +3,17 @@
 module AzerothCore
   class Item
     class ImportItem
+      attr_reader :record
       def initialize(klass)
         @klass = klass
         @new_record = false
       end
 
       def import
-        return if @klass.abstract_class
-
-        begin
-          record = @klass.build
-          entry = record.entry
-          record = record.dup
-          record.entry = entry
-        rescue ActiveRecord::RecordNotFound
-          return
-        end
+        record = @klass.build
+        entry = record.entry
+        record = record.dup
+        record.entry = entry
 
         AzerothCore::Log.standard(
           "#{"Item".colorize(:green)} importing (#{record.name.colorize(:red)}) ##{record.entry.to_s.colorize(:blue)}"
@@ -39,19 +34,16 @@ module AzerothCore
       end
 
       def to_dbc
-        return unless @record
-
-        Dbc::CustomItemEditor::ItemRecord.new(
+        {
           id: @record.entry,
-          icon_file_data_id: @record.displayid,
+          display_id: @record.display_id,
           class_id: @record.c_class,
           subclass_id: @record.subclass,
           sound_override_subclass_id: @record.sound_override_subclass,
           material: @record.material,
           inventory_type: @record.inventory_type,
           sheathe_type: @record.sheath,
-          group_sound_id: 0
-        )
+        }
       end
 
       def new_record?
