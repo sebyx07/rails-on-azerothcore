@@ -8,8 +8,13 @@ module AzerothCore
       end
 
       def reload
+        return if Rails.env.test?
+        return unless World::ItemTemplate.table_exists?
+
         import_to_db
         import_to_dbc
+      rescue ActiveRecord::NoDatabaseError
+        # Ignore
       end
 
       private

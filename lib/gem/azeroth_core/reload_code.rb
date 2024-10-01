@@ -7,7 +7,7 @@ module AzerothCore
         stop!
 
         Rails.application.reloader.reload!
-        AzerothCore::Item.reload!
+        AzerothCore::Item::ItemsReloader.new.reload
       end
 
       def stop!

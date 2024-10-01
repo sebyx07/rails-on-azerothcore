@@ -20,5 +20,5 @@ end
 
 
 Rails.application.config.after_initialize do
-  AzerothCore::Item.reload!
+  AzerothCore::Item::ItemsReloader.new.reload
 end

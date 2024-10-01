@@ -3,8 +3,14 @@
 #include <unistd.h>
 #include <stdexcept>
 #include "Config.h"
+
+#undef HAVE_STRUCT_TIMESPEC
+#undef HAVE_STRUCT_TIMEVAL
+
 #include <ruby.h>
+
 #undef uint128_t
+
 #include <fmt/format.h>
 #include "Log.h"
 #include <unordered_map>
